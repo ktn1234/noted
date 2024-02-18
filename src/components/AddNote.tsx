@@ -41,9 +41,9 @@ function AddNote({
   };
 
   return (
-    <div className="flex flex-col justify-between bg-secondary rounded-lg p-3 md:p-5 min-h-52 mb-5">
+    <div className="flex flex-col justify-between bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52 mb-5">
       <textarea
-        className="text-quaternary border-none resize-none bg-secondary focus:outline-none"
+        className="text-primary dark:text-quaternary border-none resize-none bg-tertiary dark:bg-secondary focus:outline-none placeholder:text-gray-500 dark:placeholder:text-[#9CA3AF]"
         rows={5}
         cols={30}
         placeholder="Type to add a note..."
@@ -51,7 +51,7 @@ function AddNote({
         onChange={handleChange}
         maxLength={characterLimit}
       ></textarea>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between dark:text-tertiary text-secondary">
         <small>{characterLimit - noteText.length} Remaining</small>
         <button className="save" onClick={handleSaveNote}>
           Save

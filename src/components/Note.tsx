@@ -23,7 +23,7 @@ function Note({ id, text, date, notes, setNotes }: NoteProps) {
   return (
     <div
       key={id}
-      className="flex flex-col justify-between text-quaternary bg-secondary rounded-lg p-3 md:p-5 min-h-52 mb-5"
+      className="flex flex-col justify-between text-primary dark:text-quaternary bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52 mb-5"
     >
       <span className="break-words">{text}</span>
       <div className="flex items-center justify-between">
