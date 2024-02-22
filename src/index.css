@@ -6,6 +6,7 @@
 
 html {
   @apply scroll-smooth;
+  /* Font acquired at https://fonts.google.com/selection/embed  */
   font-family: "Kalam", cursive;
   font-weight: 400;
   font-style: normal;
