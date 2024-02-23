@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
-import supabase from "../lib/supabase";
-import LoadingPage from "./LoadingPage";
 import { Navigate } from "react-router";
+import { Session } from "@supabase/supabase-js";
+
+import config from "../config";
+
+import supabase from "../lib/supabase";
+
+import LoadingPage from "./LoadingPage";
+
 import FormInput from "../components/FormInput";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
@@ -19,7 +24,12 @@ function AuthPage() {
     event.preventDefault();
 
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({ email });
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: config.SITE_URL,
+      },
+    });
 
     if (error) {
       setModalText(error.message);
