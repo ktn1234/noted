@@ -1,81 +1,73 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-import Navbar from "../components/Navbar";
+import LoadingPage from "./LoadingPage";
+
 import Search from "../components/Search";
 import AddNote from "../components/AddNote";
 import NoteList from "../components/NoteList";
-import { Note } from "../components/Note";
 
-function Home(): JSX.Element {
-  const [notesKevin, setNotesKevin] = useState<Note[]>([]);
-  const [noteTextKevin, setNoteTextKevin] = useState<string>("");
-  const [notesRaychelle, setNotesRaychelle] = useState<Note[]>([]);
-  const [noteTextRaychelle, setNoteTextRaychelle] = useState<string>("");
+import supabase from "../lib/supabase";
+import { Tables } from "../lib/supabase/types";
+import Modal from "../components/Modal";
+
+function HomePage(): JSX.Element {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [notes, setNotes] = useState<Tables<"notes">[]>([]);
+  const [notesText, setNoteText] = useState<string>("");
 
   const [searchText, setSearchText] = useState<string>("");
-  const [dialogError, setDialogError] = useState<boolean>(false);
+  const [modalText, setModalText] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
   const characterLimit = 200;
+
+  useEffect(() => {
+    supabase
+      .from("notes")
+      .select()
+      .then(({ data, error }) => {
+        if (error) console.error("[ERROR] Error fetching notes", error);
+        if (data) setNotes(data);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <>
-      <div className="p-5 shadow-sm shadow-secondary">
-        <Navbar />
-      </div>
-      <div className="p-3 md:p-5">
-        <h1 className="text-2xl text-center">Notes</h1>
-        <Search setSearchText={setSearchText} />
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <div className="block text-center">Kevin</div>
+      {loading && <LoadingPage />}
+      {!loading && (
+        <div className="p-3 md:p-5">
+          <h1 className="text-2xl text-center">Notes</h1>
+          <Search setSearchText={setSearchText} />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <AddNote
               characterLimit={characterLimit}
-              notes={notesKevin}
-              noteText={noteTextKevin}
-              setNotes={setNotesKevin}
-              setNoteText={setNoteTextKevin}
-              setDialogError={setDialogError}
+              notes={notes}
+              setNotes={setNotes}
+              noteText={notesText}
+              setNoteText={setNoteText}
+              setModalText={setModalText}
+              setShowModal={setShowModal}
             />
             <NoteList
-              notes={notesKevin.filter((note) =>
+              notes={notes.filter((note) =>
                 note.text.toLowerCase().includes(searchText.toLowerCase())
               )}
-              setNotes={setNotesKevin}
+              setNotes={setNotes}
             />
           </div>
-          <div>
-            <div className="block text-center">Raychelle</div>
-            <AddNote
-              characterLimit={characterLimit}
-              noteText={noteTextRaychelle}
-              notes={notesRaychelle}
-              setNotes={setNotesRaychelle}
-              setNoteText={setNoteTextRaychelle}
-              setDialogError={setDialogError}
+          {showModal && (
+            <Modal
+              text={modalText}
+              closeModal={() => {
+                setShowModal(false);
+                setModalText("");
+              }}
             />
-            <NoteList
-              notes={notesRaychelle.filter((note) =>
-                note.text.toLowerCase().includes(searchText.toLowerCase())
-              )}
-              setNotes={setNotesRaychelle}
-            />
-          </div>
+          )}
         </div>
-        {dialogError && (
-          <div className="fixed flex justify-center items-center w-full max-h-full inset-0 z-50">
-            <div
-              className="flex flex-col justify-between bg-quaternary p-5 text-center rounded-lg h-28"
-              onClick={() => setDialogError(false)}
-            >
-              <span>Note cannot be empty </span>
-              <button className="rounded bg-secondary text-tertiary">
-                Dismiss
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </>
   );
 }
 
-export default Home;
+export default HomePage;
