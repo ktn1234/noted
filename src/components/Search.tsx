@@ -10,7 +10,7 @@ function Search({ setSearchText }: SearchProps) {
   };
 
   return (
-    <div className="flex items-center bg-tertiary dark:bg-secondary rounded-md p-2 mb-2 md:mb-5">
+    <div className="flex items-center bg-tertiary dark:bg-secondary rounded-md p-2 mb-3">
       <span className="pr-1">
         <MdSearch />
       </span>
