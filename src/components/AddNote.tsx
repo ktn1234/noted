@@ -1,13 +1,16 @@
 import { ChangeEvent } from "react";
-import { Note } from "./Note";
+
+import supabase from "../lib/supabase";
+import { Tables, TablesInsert } from "../lib/supabase/types";
 
 interface AddNoteProps {
   characterLimit: number;
-  notes: Note[];
+  notes: Tables<"notes">[];
   noteText: string;
-  setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
+  setNotes: React.Dispatch<React.SetStateAction<Tables<"notes">[]>>;
   setNoteText: React.Dispatch<React.SetStateAction<string>>;
-  setDialogError: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalText: React.Dispatch<React.SetStateAction<string>>;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function AddNote({
@@ -16,32 +19,48 @@ function AddNote({
   noteText,
   setNotes,
   setNoteText,
-  setDialogError,
+  setModalText,
+  setShowModal,
 }: AddNoteProps) {
-  const handleSaveNote = () => {
+  async function handleSaveNote() {
     if (noteText.trim().length === 0) {
-      setDialogError(true);
+      setModalText("Note cannot be empty");
+      setShowModal(true);
       return;
     }
 
-    const date = new Date();
-    const newNote: Note = {
-      id: new Date().getTime().toString(),
+    const newNote: TablesInsert<"notes"> = {
       text: noteText,
-      date: `${date.toLocaleTimeString()} ${date.toLocaleDateString()}`,
     };
-    setNotes([newNote, ...notes]);
-    setNoteText("");
-  };
 
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+    try {
+      const { data: savedNotes, error } = await supabase
+        .from("notes")
+        .insert(newNote)
+        .select()
+        .returns<Tables<"notes">[]>();
+
+      setNoteText("");
+
+      if (error) {
+        console.error("[ERROR] Error saving note", error);
+        return;
+      }
+
+      setNotes([...savedNotes, ...notes]);
+    } catch (error) {
+      console.error("[ERROR] Error saving note", error);
+    }
+  }
+
+  function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
     if (characterLimit - event.target.value.length >= 0) {
       setNoteText(event.target.value);
     }
-  };
+  }
 
   return (
-    <div className="flex flex-col justify-between bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52 mb-5">
+    <div className="flex flex-col justify-between bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52">
       <textarea
         className="text-primary dark:text-quaternary border-none resize-none bg-tertiary dark:bg-secondary focus:outline-none placeholder:text-gray-500 dark:placeholder:text-[#9CA3AF]"
         rows={5}
