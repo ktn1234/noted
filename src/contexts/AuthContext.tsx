@@ -22,14 +22,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session ? session.user : null);
+      if (session && session.user) {
+        setSession(session);
+        setUser(session.user);
+      }
       setLoading(false);
     });
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session ? session.user : null);
+      if (session && session.user) {
+        setSession(session);
+        setUser(session.user);
+      }
       setLoading(false);
     });
   }, []);
