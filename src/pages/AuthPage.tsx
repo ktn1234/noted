@@ -3,6 +3,9 @@ import { Session } from "@supabase/supabase-js";
 import supabase from "../lib/supabase";
 import LoadingPage from "./LoadingPage";
 import { Navigate } from "react-router";
+import FormInput from "../components/FormInput";
+import Button from "../components/Button";
+import Modal from "../components/Modal";
 
 function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -52,45 +55,34 @@ function AuthPage() {
             {"Enter your email to receive a magic link (OTP)"}
           </p>
           <form onSubmit={handleLogin}>
-            <div className="flex items-center bg-tertiary dark:bg-secondary rounded-md p-2 mb-5">
-              <input
-                className="bg-tertiary dark:bg-secondary text-primary dark:text-quaternary w-full border-none focus:outline-none placeholder:text-gray-500 dark:placeholder:text-[#9CA3AF]"
-                type="email"
-                placeholder="Your email"
-                value={email}
-                required={true}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setEmail(e.target.value)
-                }
-                autoComplete="email"
-              />
-            </div>
-            <button
-              className="rounded-md p-2 bg-tertiary dark:bg-secondary text-primary dark:text-quaternary w-full border-none focus:outline-none placeholder:text-gray-500 dark:placeholder:text-[#9CA3AF] dark:hover:bg-tertiary dark:hover:text-primary hover:bg-primary hover:text-quaternary transition-all duration-300 ease-in-out"
+            <FormInput
+              label="Email"
+              type="email"
+              htmlFor="email"
+              placeholder="user@gmail.com"
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+              // TODO: Fix autoComplete colors when user chooses to autocomplete email
+              autoComplete="email"
+            />
+            <Button
+              text="Send magic link"
+              onClick={() => {}}
               disabled={loading}
-            >
-              Send magic link
-            </button>
+            />
           </form>
         </div>
       )}
       {showModal && (
-        <div className="fixed flex justify-center items-center w-full max-h-full inset-0 z-50">
-          <div className="mx-5 flex flex-col justify-between bg-primary dark:bg-quaternary p-5 text-center rounded-lg min-h-28 max-w-96">
-            <span className="text-quaternary dark:text-primary">
-              {modalText}
-            </span>
-            <button
-              className="rounded bg-tertiary dark:bg-secondary text-primary dark:text-quaternary dark:hover:bg-tertiary dark:hover:text-primary hover:bg-primary hover:text-quaternary transition-all duration-300 ease-in-out"
-              onClick={() => {
-                setShowModal(false);
-                setModalText("");
-              }}
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
+        <Modal
+          text={modalText}
+          closeModal={() => {
+            setShowModal(false);
+            setModalText("");
+          }}
+        />
       )}
     </>
   );
