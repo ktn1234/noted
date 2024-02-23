@@ -1,16 +1,18 @@
-import Note, { Note as INote } from "./Note";
+import { Tables } from "../lib/supabase/types";
+import Note from "./Note";
 
 interface NoteListProps {
-  notes: INote[];
-  setNotes: React.Dispatch<React.SetStateAction<INote[]>>;
+  notes: Tables<"notes">[];
+  setNotes: React.Dispatch<React.SetStateAction<Tables<"notes">[]>>;
 }
 
 function NoteList({ notes, setNotes }: NoteListProps) {
   return notes.map((note) => (
     <Note
+      key={note.id}
       id={note.id}
       text={note.text}
-      date={note.date}
+      date={note.created_at}
       notes={notes}
       setNotes={setNotes}
     />
