@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Yanone+Kaffeesatz:wght@200..700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,8 +6,9 @@
 
 html {
   @apply scroll-smooth;
-  /* Font acquired at https://fonts.google.com/selection/embed  */
-  font-family: "Kalam", cursive;
+  /* Font acquired at https://fonts.google.com/specimen/Yanone+Kaffeesatz  */
+  font-family: "Yanone Kaffeesatz", sans-serif;
+  font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
 }
