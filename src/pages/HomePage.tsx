@@ -35,10 +35,10 @@ function HomePage(): JSX.Element {
     <>
       {loading && <LoadingPage />}
       {!loading && (
-        <div className="p-3 md:p-5">
+        <main className="p-3 md:p-5">
           <h1 className="text-2xl text-center">Notes</h1>
           <Search setSearchText={setSearchText} />
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <section className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <AddNote
               characterLimit={characterLimit}
               notes={notes}
@@ -54,7 +54,7 @@ function HomePage(): JSX.Element {
               )}
               setNotes={setNotes}
             />
-          </div>
+          </section>
           {showModal && (
             <Modal
               text={modalText}
@@ -64,7 +64,7 @@ function HomePage(): JSX.Element {
               }}
             />
           )}
-        </div>
+        </main>
       )}
     </>
   );

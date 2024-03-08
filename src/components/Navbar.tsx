@@ -70,14 +70,12 @@ function Navbar(): JSX.Element {
 
   return (
     <nav className="flex items-center justify-between">
-      <div>
-        <div
-          className="flex items-center hover:underline cursor-pointer"
-          onClick={() => navigate("/")}
-        >
-          <FaStickyNote />
-          <span className="pl-2">Noted</span>
-        </div>
+      <div
+        className="flex items-center hover:underline cursor-pointer"
+        onClick={() => navigate("/")}
+      >
+        <FaStickyNote />
+        <span className="pl-2">Noted</span>
       </div>
       <div className="flex gap-2 items-center">
         {theme === "dark" && (

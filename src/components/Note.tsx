@@ -33,7 +33,7 @@ function Note({ id, text, date, notes, setNotes }: NoteProps) {
   const dateString = new Date(date).toLocaleString();
 
   return (
-    <div
+    <article
       key={id}
       className="flex flex-col justify-between text-primary dark:text-quaternary bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52"
     >
@@ -45,7 +45,7 @@ function Note({ id, text, date, notes, setNotes }: NoteProps) {
           onClick={() => handleDeleteNote(id)}
         />
       </div>
-    </div>
+    </article>
   );
 }
 

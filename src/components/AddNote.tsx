@@ -60,7 +60,7 @@ function AddNote({
   }
 
   return (
-    <div className="flex flex-col justify-between bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52">
+    <article className="flex flex-col justify-between bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52">
       <textarea
         className="text-primary dark:text-quaternary border-none resize-none bg-tertiary dark:bg-secondary focus:outline-none placeholder:text-gray-500 dark:placeholder:text-[#9CA3AF]"
         rows={5}
@@ -76,7 +76,7 @@ function AddNote({
           Save
         </button>
       </div>
-    </div>
+    </article>
   );
 }
 
