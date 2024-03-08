@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router";
 import { Session } from "@supabase/supabase-js";
 
-import config from "../config";
-
 import supabase from "../lib/supabase";
 
 import LoadingPage from "./LoadingPage";
@@ -16,18 +14,20 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [initLoading, setInitLoading] = useState(true);
   const [email, setEmail] = useState("");
+  const [confirmationCode, setConfirmationCode] = useState("");
+  const [confirming, setConfirming] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("");
   const [session, setSession] = useState<Session | null>(null);
 
-  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSendOTP(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     setLoading(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: config.SITE_URL,
+        shouldCreateUser: false,
       },
     });
 
@@ -35,10 +35,26 @@ function AuthPage() {
       setModalText(error.message);
       setShowModal(true);
     } else {
-      setModalText("Magic link sent. Please check your email.");
-      setShowModal(true);
+      setConfirming(true);
     }
     setLoading(false);
+  }
+
+  async function handleConfirm(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setLoading(true);
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token: confirmationCode,
+      type: "email",
+    });
+
+    if (error) {
+      setConfirming(false);
+      setModalText(error.message);
+      setShowModal(true);
+    }
   }
 
   useEffect(() => {
@@ -59,12 +75,12 @@ function AuthPage() {
     <>
       {loading && <LoadingPage />}
       {session && <Navigate to="/" />}
-      {!session && (
+      {!session && !confirming && (
         <div className="flex flex-col items-center w-full max-h-full">
           <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
-            {"Enter your email to receive a magic link (OTP)"}
+            {"Enter your email to receive a OTP Code to sign in"}
           </p>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSendOTP}>
             <FormInput
               label="Email"
               type="email"
@@ -74,14 +90,29 @@ function AuthPage() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
               }
-              // TODO: Fix autoComplete colors when user chooses to autocomplete email
               autoComplete="email"
             />
-            <Button
-              text="Send magic link"
-              onClick={() => {}}
-              disabled={loading}
+            <Button text="Send Code" disabled={loading} />
+          </form>
+        </div>
+      )}
+      {confirming && (
+        <div className="flex flex-col items-center w-full max-h-full">
+          <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
+            {"Enter the OTP Code sent to your email"}
+          </p>
+          <form onSubmit={handleConfirm}>
+            <FormInput
+              label="OTP"
+              type="text"
+              htmlFor="otp"
+              placeholder="123456"
+              value={confirmationCode}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setConfirmationCode(e.target.value)
+              }
             />
+            <Button text="Confirm" disabled={loading} />
           </form>
         </div>
       )}

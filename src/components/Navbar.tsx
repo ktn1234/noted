@@ -19,8 +19,13 @@ function Navbar(): JSX.Element {
   const [displayDropdown, setDisplayDropdown] = useState<boolean>(false);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
 
-  function signOut() {
-    supabase.auth.signOut();
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("[ERROR] Error signing out:", error);
+      return;
+    }
+    navigate("/");
   }
 
   useEffect(() => {
