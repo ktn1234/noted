@@ -1,4 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+} from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { AuthProvider } from "./contexts/AuthContext";
 
@@ -15,24 +21,18 @@ function App() {
         <BrowserRouter>
           <RootLayout>
             <Routes>
+              <Route path="*" element={<Navigate to="/" />} />
               <Route path="/auth" element={<AuthPage />} />
               <Route
-                index
                 element={
                   <Protected>
-                    <HomePage />
+                    <Outlet />
                   </Protected>
                 }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <Protected>
-                    <SettingsPage />
-                  </Protected>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" />} />
+              >
+                <Route index element={<HomePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Route>
             </Routes>
           </RootLayout>
         </BrowserRouter>
