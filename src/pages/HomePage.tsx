@@ -126,8 +126,8 @@ function HomePage(): JSX.Element {
                   key={note.id}
                   id={note.id}
                   text={note.text}
-                  username={note.profiles.username}
-                  avatar_url={note.profiles.avatar_url}
+                  username={note.profiles!.username as string}
+                  avatar_url={note.profiles!.avatar_url as string}
                   date={note.created_at}
                   handleDeleteNote={handleDeleteNote}
                 />

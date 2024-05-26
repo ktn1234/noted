@@ -102,8 +102,8 @@ function ProfilePage() {
                       id={note.id}
                       text={note.text}
                       date={note.created_at}
-                      username={profile.username}
-                      avatar_url={profile.avatar_url}
+                      username={profile.username as string}
+                      avatar_url={profile.avatar_url as string}
                       handleDeleteNote={handleDeleteNote}
                     />
                   ) : (
@@ -111,8 +111,8 @@ function ProfilePage() {
                       id={note.id}
                       text={note.text}
                       date={note.created_at}
-                      username={profile.username}
-                      avatar_url={profile.avatar_url}
+                      username={profile.username as string}
+                      avatar_url={profile.avatar_url as string}
                     />
                   )}
                 </li>
