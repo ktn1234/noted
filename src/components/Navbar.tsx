@@ -8,17 +8,12 @@ import useTheme from "../hooks/useTheme";
 
 import supabase from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
-import LoadingPage from "../pages/LoadingPage";
-import { Tables } from "../lib/supabase/database.types";
 
 function Navbar(): JSX.Element {
+  const { profile } = useAuth();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<Partial<Tables<"profiles">> | null>(
-    null
-  );
   const [displayDropdown, setDisplayDropdown] = useState<boolean>(false);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
 
@@ -29,30 +24,6 @@ function Navbar(): JSX.Element {
       return;
     }
   }
-
-  useEffect(() => {
-    async function getAvatar() {
-      if (user) {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select("avatar_url, username")
-          .eq("id", user.id)
-          .single();
-
-        if (error) {
-          console.error("[ERROR] Error getting avatar:", error);
-          return;
-        }
-
-        if (data) {
-          setProfile(data);
-        }
-      }
-      setLoading(false);
-    }
-
-    getAvatar();
-  }, [user]);
 
   useEffect(() => {
     function closeDropdown(event: MouseEvent) {
@@ -71,8 +42,6 @@ function Navbar(): JSX.Element {
       document.removeEventListener("mousedown", closeDropdown);
     };
   }, [displayDropdown]);
-
-  if (loading) return <LoadingPage />;
 
   return (
     <nav className="flex items-center justify-between">

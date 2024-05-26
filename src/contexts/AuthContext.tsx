@@ -2,20 +2,26 @@ import { Session, User } from "@supabase/supabase-js";
 import { useState, useEffect, createContext } from "react";
 import supabase from "../lib/supabase";
 import LoadingPage from "../pages/LoadingPage";
+import { Tables } from "../lib/supabase/database.types";
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
+  profile: Tables<"profiles"> | null;
+  setProfile: React.Dispatch<React.SetStateAction<Tables<"profiles"> | null>>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
+  profile: null,
+  setProfile: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -29,11 +35,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     supabase.auth.onAuthStateChange((_event, session) => {
       if (session && session.user) {
+        supabase
+          .from("profiles")
+          .select(
+            `
+              avatar_url,
+              full_name,
+              id,
+              updated_at,
+              username,
+              website
+            `
+          )
+          .eq("id", session.user.id)
+          .single()
+          .then(({ data, error }) => {
+            if (error) console.error("[ERROR] Error fetching profile:", error);
+            if (data) {
+              setProfile(data);
+            }
+          });
         setSession(session);
         setUser(session.user);
       } else {
         setUser(null);
         setSession(null);
+        setProfile(null);
       }
       setLoading(false);
     });
@@ -42,6 +69,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     session,
+    profile,
+    setProfile,
   };
 
   return (

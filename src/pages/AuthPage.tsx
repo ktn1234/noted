@@ -70,10 +70,10 @@ function AuthPage() {
   }, []);
 
   if (initLoading) return <LoadingPage />;
+  if (loading) return <LoadingPage />;
 
   return (
     <>
-      {loading && <LoadingPage />}
       {session && <Navigate to="/" />}
       {!session && !confirming && (
         <div className="flex flex-col items-center w-full max-h-full">

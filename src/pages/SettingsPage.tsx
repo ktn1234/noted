@@ -10,49 +10,27 @@ import FormInput from "../components/FormInput";
 import Button from "../components/Button";
 
 function SettingsPage() {
-  const { user } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const { user, profile, setProfile } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [full_name, setFullName] = useState<string | null>(null);
   const [website, setWebsite] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    async function getProfile() {
-      if (!user) return;
-
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select(`username, full_name, website, avatar_url`)
-          .eq("id", user.id)
-          .single();
-
-        if (error) {
-          console.error("[ERROR] Error getting profile:", error);
-        }
-
-        if (data) {
-          setUsername(data.username);
-          setFullName(data.full_name);
-          setWebsite(data.website);
-          setAvatarUrl(data.avatar_url);
-        }
-      } catch (error) {
-        console.error("[ERROR] Error getting profile:", error);
-      }
-      setLoading(false);
+    if (user && profile) {
+      setUsername(profile.username);
+      setFullName(profile.full_name);
+      setWebsite(profile.website);
+      setAvatarUrl(profile.avatar_url);
     }
-
-    getProfile();
-  }, [user]);
+  }, [user, profile]);
 
   async function updateProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) return;
 
-    // setLoading(true);
+    setLoading(true);
     const profile: TablesInsert<"profiles"> = {
       id: user.id,
       username,
@@ -62,20 +40,23 @@ function SettingsPage() {
     };
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
-        .upsert<TablesInsert<"profiles">>(profile);
+        .upsert<TablesInsert<"profiles">>(profile)
+        .select()
+        .single();
 
       if (error) {
         console.error("[ERROR] Error updating profile:", error);
       }
+
+      if (data) {
+        setProfile(data);
+      }
     } catch (error) {
       console.error("[ERROR] Error updating profile:", error);
     }
-    // setLoading(false);
-
-    // TODO: Refactor how to refresh the avatar in the Navbar using AuthContext (will have to put profile info in the AuthContext)
-    window.location.reload();
+    setLoading(false);
   }
 
   if (!user) return <Navigate to="/auth" />;
