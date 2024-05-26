@@ -14,7 +14,7 @@ import { NotesJoinProfile } from "../lib/supabase/query.types";
 import Modal from "../components/Modal";
 
 function HomePage(): JSX.Element {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
   const [notes, setNotes] = useState<NotesJoinProfile>([]);
 
@@ -103,17 +103,28 @@ function HomePage(): JSX.Element {
               .filter((note) =>
                 note.text.toLowerCase().includes(searchText.toLowerCase())
               )
-              .map((note) => (
-                <Note
-                  key={note.id}
-                  id={note.id}
-                  text={note.text}
-                  username={note.profiles!.username as string}
-                  avatar_url={note.profiles!.avatar_url as string}
-                  date={note.created_at}
-                  handleDeleteNote={handleDeleteNote}
-                />
-              ))}
+              .map((note) =>
+                note.profiles?.username === profile?.username ? (
+                  <Note
+                    key={note.id}
+                    id={note.id}
+                    text={note.text}
+                    username={note.profiles!.username as string}
+                    avatar_url={note.profiles!.avatar_url as string}
+                    date={note.created_at}
+                    handleDeleteNote={handleDeleteNote}
+                  />
+                ) : (
+                  <Note
+                    key={note.id}
+                    id={note.id}
+                    text={note.text}
+                    username={note.profiles!.username as string}
+                    avatar_url={note.profiles!.avatar_url as string}
+                    date={note.created_at}
+                  />
+                )
+              )}
           </section>
           {showModal && (
             <Modal
