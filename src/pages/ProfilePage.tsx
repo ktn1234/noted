@@ -19,15 +19,7 @@ function ProfilePage() {
 
     supabase
       .from("profiles")
-      .select(
-        `
-        username,
-        full_name,
-        avatar_url,
-        website,
-        notes (id, text, created_at, updated_at, user_id)
-      `
-      )
+      .select("*, notes(*)")
       .eq("username", username)
       .order("created_at", {
         ascending: false,

@@ -32,7 +32,6 @@ function SettingsPage() {
 
     setLoading(true);
     const profile: TablesInsert<"profiles"> = {
-      id: user.id,
       username: username?.toLowerCase(),
       full_name,
       avatar_url,
@@ -42,7 +41,7 @@ function SettingsPage() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .upsert<TablesInsert<"profiles">>(profile)
+        .upsert(profile)
         .select()
         .single();
 

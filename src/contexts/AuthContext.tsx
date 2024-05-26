@@ -37,17 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session && session.user) {
         supabase
           .from("profiles")
-          .select(
-            `
-              avatar_url,
-              full_name,
-              id,
-              updated_at,
-              username,
-              website
-            `
-          )
-          .eq("id", session.user.id)
+          .select("*")
+          .eq("user_id", session.user.id)
           .single()
           .then(({ data, error }) => {
             if (error) console.error("[ERROR] Error fetching profile:", error);

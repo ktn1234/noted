@@ -27,16 +27,7 @@ function HomePage(): JSX.Element {
 
     supabase
       .from("notes")
-      .select(
-        `
-          id,
-          text,
-          created_at,
-          updated_at,
-          user_id,
-          profiles (username, full_name, avatar_url, website)
-        `
-      )
+      .select("*, profiles (*)")
       .order("created_at", { ascending: false })
       .then(({ data, error }) => {
         if (error) console.error("[ERROR] Error fetching notes", error);
@@ -56,16 +47,7 @@ function HomePage(): JSX.Element {
       const { data, error } = await supabase
         .from("notes")
         .insert({ text })
-        .select(
-          `
-          id,
-          text,
-          created_at,
-          updated_at,
-          user_id,
-          profiles (username, full_name, avatar_url, website)
-        `
-        )
+        .select("*, profiles (*)")
         .single();
 
       if (error) {
