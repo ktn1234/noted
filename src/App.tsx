@@ -10,6 +10,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 
 import RootLayout from "./components/RootLayout";
 import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 import AuthPage from "./pages/AuthPage";
 import Protected from "./components/Protected";
 import SettingsPage from "./pages/SettingsPage";
@@ -31,6 +32,7 @@ function App() {
                 }
               >
                 <Route index element={<HomePage />} />
+                <Route path="/profiles/:username" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
               </Route>
             </Routes>

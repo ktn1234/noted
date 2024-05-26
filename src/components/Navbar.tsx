@@ -9,13 +9,16 @@ import useTheme from "../hooks/useTheme";
 import supabase from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 import LoadingPage from "../pages/LoadingPage";
+import { Tables } from "../lib/supabase/database.types";
 
 function Navbar(): JSX.Element {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [loading, setLoading] = useState(true);
-  const [avatar_url, setAvatarUrl] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Partial<Tables<"profiles">> | null>(
+    null
+  );
   const [displayDropdown, setDisplayDropdown] = useState<boolean>(false);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
 
@@ -32,7 +35,7 @@ function Navbar(): JSX.Element {
       if (user) {
         const { data, error } = await supabase
           .from("profiles")
-          .select("avatar_url")
+          .select("avatar_url, username")
           .eq("id", user.id)
           .single();
 
@@ -42,8 +45,7 @@ function Navbar(): JSX.Element {
         }
 
         if (data) {
-          console.log("[LOG] Avatar data:", data);
-          setAvatarUrl(data.avatar_url);
+          setProfile(data);
         }
       }
       setLoading(false);
@@ -98,15 +100,15 @@ function Navbar(): JSX.Element {
         )}
         {user && (
           <div ref={dropDownRef}>
-            {avatar_url && (
+            {profile?.avatar_url && (
               <img
-                src={avatar_url}
+                src={profile.avatar_url}
                 alt="Avatar"
                 onClick={() => setDisplayDropdown(!displayDropdown)}
                 className="w-8 h-8 rounded-full cursor-pointer"
               />
             )}
-            {!avatar_url && (
+            {!profile?.avatar_url && (
               <IoMdPerson
                 onClick={() => setDisplayDropdown(!displayDropdown)}
                 className="cursor-pointer hover:text-secondary focus:text-secondary dark:hover:text-quaternary dark:focus:text-quaternary"
@@ -114,10 +116,19 @@ function Navbar(): JSX.Element {
               />
             )}
             {displayDropdown && (
-              <div className="absolute right-0 flex flex-col mt-2 mr-5 rounded-md bg-tertiary text-primary dark:bg-secondary dark:text-quaternary shadow-lg max-w-44">
+              <menu className="absolute right-0 flex flex-col mt-2 mr-5 rounded-md bg-tertiary text-primary dark:bg-secondary dark:text-quaternary shadow-lg max-w-44">
                 <ul className="py-2">
                   <li className="px-4 py-2">
                     <span className="break-words">{user.email}</span>
+                  </li>
+                  <li
+                    className="px-4 py-2 dark:hover:text-primary hover:text-quaternary cursor-pointer"
+                    onClick={() => {
+                      navigate(`/profiles/${profile?.username}`);
+                      setDisplayDropdown(false);
+                    }}
+                  >
+                    <span>Profile</span>
                   </li>
                   <li
                     className="px-4 py-2 dark:hover:text-primary hover:text-quaternary cursor-pointer"
@@ -135,7 +146,7 @@ function Navbar(): JSX.Element {
                     <span>Sign out</span>
                   </li>
                 </ul>
-              </div>
+              </menu>
             )}
           </div>
         )}
