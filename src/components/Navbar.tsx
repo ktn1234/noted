@@ -13,7 +13,7 @@ function Navbar(): JSX.Element {
   const { profile } = useAuth();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { darkMode, toggleTheme } = useTheme();
   const [displayDropdown, setDisplayDropdown] = useState<boolean>(false);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
 
@@ -53,20 +53,20 @@ function Navbar(): JSX.Element {
         <span className="pl-2">Noted</span>
       </div>
       <div className="flex gap-2 items-center">
-        {theme === "dark" && (
+        {darkMode ? (
           <MdLightMode
             onClick={toggleTheme}
             className="cursor-pointer dark:hover:text-quaternary"
             size="1.5em"
           />
-        )}
-        {theme === "light" && (
+        ) : (
           <MdDarkMode
             onClick={toggleTheme}
             className="cursor-pointer hover:text-secondary"
             size="1.5em"
           />
         )}
+
         {user && (
           <div ref={dropDownRef}>
             {profile?.avatar_url && (
