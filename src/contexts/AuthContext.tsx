@@ -6,13 +6,11 @@ import LoadingPage from "../pages/LoadingPage";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  signOut: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   session: null,
-  signOut: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -33,6 +31,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (session && session.user) {
         setSession(session);
         setUser(session.user);
+      } else {
+        setUser(null);
+        setSession(null);
       }
       setLoading(false);
     });
@@ -41,7 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const value = {
     user,
     session,
-    signOut: () => supabase.auth.signOut(),
   };
 
   return (

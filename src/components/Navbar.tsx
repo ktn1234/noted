@@ -25,7 +25,6 @@ function Navbar(): JSX.Element {
       console.error("[ERROR] Error signing out:", error);
       return;
     }
-    navigate("/");
   }
 
   useEffect(() => {
@@ -51,7 +50,7 @@ function Navbar(): JSX.Element {
     }
 
     getAvatar();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     function closeDropdown(event: MouseEvent) {
