@@ -8,10 +8,11 @@ import FormInput from "../components/FormInput";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
 import useAuth from "../hooks/useAuth";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 function AuthPage() {
   const { session } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [confirmationCode, setConfirmationCode] = useState("");
@@ -80,6 +81,12 @@ function AuthPage() {
             />
             <Button text="Send Code" disabled={loading} />
           </form>
+          <span
+            className="mt-5 cursor-pointer hover:underline"
+            onClick={() => navigate("/auth/verify")}
+          >
+            Already have a code?
+          </span>
         </div>
       )}
       {!session && confirming && (
