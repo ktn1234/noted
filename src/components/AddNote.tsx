@@ -1,61 +1,17 @@
-import { ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 
-import supabase from "../lib/supabase";
-import { Tables, TablesInsert } from "../lib/supabase/database.types";
+const CHARACTER_LIMIT = 200;
 
 interface AddNoteProps {
-  characterLimit: number;
-  notes: Tables<"notes">[];
-  noteText: string;
-  setNotes: React.Dispatch<React.SetStateAction<Tables<"notes">[]>>;
-  setNoteText: React.Dispatch<React.SetStateAction<string>>;
-  setModalText: React.Dispatch<React.SetStateAction<string>>;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  handleSaveNote: (text: string) => void;
 }
 
-function AddNote({
-  characterLimit,
-  notes,
-  noteText,
-  setNotes,
-  setNoteText,
-  setModalText,
-  setShowModal,
-}: AddNoteProps) {
-  async function handleSaveNote() {
-    if (noteText.trim().length === 0) {
-      setModalText("Note cannot be empty");
-      setShowModal(true);
-      return;
-    }
-
-    const newNote: TablesInsert<"notes"> = {
-      text: noteText,
-    };
-
-    try {
-      const { data: savedNotes, error } = await supabase
-        .from("notes")
-        .insert(newNote)
-        .select()
-        .returns<Tables<"notes">[]>();
-
-      setNoteText("");
-
-      if (error) {
-        console.error("[ERROR] Error saving note", error);
-        return;
-      }
-
-      setNotes([...savedNotes, ...notes]);
-    } catch (error) {
-      console.error("[ERROR] Error saving note", error);
-    }
-  }
+function AddNote({ handleSaveNote }: AddNoteProps): JSX.Element {
+  const [text, setText] = useState<string>("");
 
   function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
-    if (characterLimit - event.target.value.length >= 0) {
-      setNoteText(event.target.value);
+    if (CHARACTER_LIMIT - event.target.value.length >= 0) {
+      setText(event.target.value);
     }
   }
 
@@ -66,13 +22,13 @@ function AddNote({
         rows={5}
         cols={30}
         placeholder="Type to add a note..."
-        value={noteText}
+        value={text}
         onChange={handleChange}
-        maxLength={characterLimit}
+        maxLength={CHARACTER_LIMIT}
       ></textarea>
       <div className="flex items-center justify-between dark:text-tertiary text-secondary">
-        <small>{characterLimit - noteText.length} Remaining</small>
-        <button className="save" onClick={handleSaveNote}>
+        <small>{CHARACTER_LIMIT - text.length} Remaining</small>
+        <button className="save" onClick={() => handleSaveNote(text)}>
           Save
         </button>
       </div>

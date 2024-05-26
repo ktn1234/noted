@@ -1,35 +1,24 @@
 import { FaTrash } from "react-icons/fa";
-import { Tables } from "../lib/supabase/database.types";
-import supabase from "../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 export interface NoteProps {
   id: number;
   text: string;
   date: string;
-  notes: Tables<"notes">[];
-  setNotes: React.Dispatch<React.SetStateAction<Tables<"notes">[]>>;
+  username: string;
+  avatar_url: string;
+  handleDeleteNote?: (id: number) => void;
 }
 
-function Note({ id, text, date, notes, setNotes }: NoteProps) {
-  async function handleDeleteNote(id: number) {
-    try {
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", id)
-        .single<Tables<"notes">>();
-
-      if (error) {
-        console.error("[ERROR] Error deleting note:", error);
-        return;
-      }
-
-      setNotes(notes.filter((note) => note.id !== id));
-    } catch (error) {
-      console.error("[ERROR] Error deleting note:", error);
-    }
-  }
-
+function Note({
+  id,
+  text,
+  date,
+  username,
+  avatar_url,
+  handleDeleteNote,
+}: NoteProps) {
+  const navigate = useNavigate();
   const dateString = new Date(date).toLocaleString();
 
   return (
@@ -40,10 +29,22 @@ function Note({ id, text, date, notes, setNotes }: NoteProps) {
       <span className="break-words">{text}</span>
       <div className="flex items-center justify-between">
         <small>{dateString}</small>
-        <FaTrash
-          className="cursor-pointer"
-          onClick={() => handleDeleteNote(id)}
-        />
+        <div className="flex items-center">
+          <img
+            src={avatar_url}
+            alt="Profile Picture"
+            className="w-8 h-8 rounded-full cursor-pointer"
+            onClick={() => {
+              navigate(`/profiles/${username}`);
+            }}
+          />
+          {handleDeleteNote && (
+            <FaTrash
+              className="ml-3 cursor-pointer"
+              onClick={() => handleDeleteNote(id)}
+            />
+          )}
+        </div>
       </div>
     </article>
   );

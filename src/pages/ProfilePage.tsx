@@ -5,17 +5,17 @@ import LoadingPage from "./LoadingPage";
 import { ProfileJoinNotes } from "../lib/supabase/query.types";
 import Note from "../components/Note";
 import { Tables } from "../lib/supabase/database.types";
+import useAuth from "../hooks/useAuth";
 
 function ProfilePage() {
   const { username } = useParams();
+  const user = useAuth();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<ProfileJoinNotes | null>(null);
   const [notes, setNotes] = useState<Tables<"notes">[]>([]);
 
   useEffect(() => {
     if (!username) return;
-
-    console.log("[DEBUG] Fetching profile:", username);
 
     supabase
       .from("profiles")
@@ -43,6 +43,25 @@ function ProfilePage() {
         setLoading(false);
       });
   }, [username]);
+
+  async function handleDeleteNote(id: number) {
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("[ERROR] Error deleting note:", error);
+        return;
+      }
+
+      setNotes(notes.filter((note) => note.id !== id));
+    } catch (error) {
+      console.error("[ERROR] Error deleting note:", error);
+    }
+  }
 
   if (loading) return <LoadingPage />;
 
@@ -74,19 +93,28 @@ function ProfilePage() {
                 </a>
               </p>
             </section>
-            <h2 className="text-2xl text-center mt-5">Your Notes</h2>
-            <ul className="flex flex-col gap-2">
+            <h2 className="text-2xl text-center mt-5">Notes</h2>
+            <ul className="flex flex-col gap-2 w-full md:w-[50%]">
               {profile.notes.map((note) => (
                 <li key={note.id}>
-                  {
+                  {username === user.profile?.username ? (
                     <Note
                       id={note.id}
                       text={note.text}
                       date={note.created_at}
-                      notes={notes}
-                      setNotes={setNotes}
+                      username={profile.username}
+                      avatar_url={profile.avatar_url}
+                      handleDeleteNote={handleDeleteNote}
                     />
-                  }
+                  ) : (
+                    <Note
+                      id={note.id}
+                      text={note.text}
+                      date={note.created_at}
+                      username={profile.username}
+                      avatar_url={profile.avatar_url}
+                    />
+                  )}
                 </li>
               ))}
             </ul>

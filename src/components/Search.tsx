@@ -1,16 +1,12 @@
 import { MdSearch } from "react-icons/md";
 
 interface SearchProps {
-  setSearchText: React.Dispatch<React.SetStateAction<string>>;
+  handleSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function Search({ setSearchText }: SearchProps) {
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
-  };
-
+function Search({ handleSearch }: SearchProps) {
   return (
-    <section className="flex items-center bg-tertiary dark:bg-secondary rounded-md p-2 mb-3">
+    <section className="flex items-center bg-tertiary dark:bg-secondary rounded-md p-2">
       <span className="pr-1">
         <MdSearch />
       </span>

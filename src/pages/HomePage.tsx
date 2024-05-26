@@ -1,59 +1,137 @@
 import { useEffect, useState } from "react";
 
+import useAuth from "../hooks/useAuth";
+
 import LoadingPage from "./LoadingPage";
 
 import Search from "../components/Search";
 import AddNote from "../components/AddNote";
-import NoteList from "../components/NoteList";
+import Note from "../components/Note";
 
 import supabase from "../lib/supabase";
-import { Tables } from "../lib/supabase/database.types";
+import { NotesJoinProfile } from "../lib/supabase/query.types";
+
 import Modal from "../components/Modal";
 
 function HomePage(): JSX.Element {
+  const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
-  const [notes, setNotes] = useState<Tables<"notes">[]>([]);
-  const [notesText, setNoteText] = useState<string>("");
+  const [notes, setNotes] = useState<NotesJoinProfile>([]);
 
   const [searchText, setSearchText] = useState<string>("");
   const [modalText, setModalText] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
-  const characterLimit = 200;
 
   useEffect(() => {
+    if (!user) return;
+
     supabase
       .from("notes")
-      .select()
+      .select(
+        `
+          id,
+          text,
+          created_at,
+          updated_at,
+          user_id,
+          profiles (username, full_name, avatar_url, website)
+        `
+      )
+      .order("created_at", { ascending: false })
       .then(({ data, error }) => {
         if (error) console.error("[ERROR] Error fetching notes", error);
         if (data) setNotes(data);
         setLoading(false);
       });
-  }, []);
+  }, [user]);
+
+  async function handleSaveNote(text: string) {
+    if (text.trim().length === 0) {
+      setModalText("Note cannot be empty");
+      setShowModal(true);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("notes")
+        .insert({ text })
+        .select(
+          `
+          id,
+          text,
+          created_at,
+          updated_at,
+          user_id,
+          profiles (username, full_name, avatar_url, website)
+        `
+        )
+        .single();
+
+      if (error) {
+        console.error("[ERROR] Error saving note:", error);
+        setModalText("Error saving note");
+        setShowModal(true);
+      }
+
+      if (data) {
+        setNotes([data, ...notes]);
+      }
+    } catch (error) {
+      console.error("[ERROR] Error saving note", error);
+    }
+  }
+
+  async function handleDeleteNote(id: number) {
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("[ERROR] Error deleting note:", error);
+        return;
+      }
+
+      setNotes(notes.filter((note) => note.id !== id));
+    } catch (error) {
+      console.error("[ERROR] Error deleting note:", error);
+    }
+  }
+
+  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
+    setSearchText(e.target.value);
+  }
+
+  if (loading) return <LoadingPage />;
 
   return (
     <>
-      {loading && <LoadingPage />}
-      {!loading && (
-        <main className="p-3 md:p-5">
-          <h1 className="text-2xl text-center">Notes</h1>
-          <Search setSearchText={setSearchText} />
-          <section className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <AddNote
-              characterLimit={characterLimit}
-              notes={notes}
-              setNotes={setNotes}
-              noteText={notesText}
-              setNoteText={setNoteText}
-              setModalText={setModalText}
-              setShowModal={setShowModal}
-            />
-            <NoteList
-              notes={notes.filter((note) =>
+      {!loading && !!notes.length && (
+        <main className="p-3 md:p-5 flex flex-col items-center">
+          <h1 className="text-2xl text-center">All Notes</h1>
+          <section className="flex flex-col gap-2 w-full md:w-[50%]">
+            <AddNote handleSaveNote={handleSaveNote} />
+            <div className="mt-5">
+              <Search handleSearch={handleSearch} />
+            </div>
+            {notes
+              .filter((note) =>
                 note.text.toLowerCase().includes(searchText.toLowerCase())
-              )}
-              setNotes={setNotes}
-            />
+              )
+              .map((note) => (
+                <Note
+                  key={note.id}
+                  id={note.id}
+                  text={note.text}
+                  username={note.profiles.username}
+                  avatar_url={note.profiles.avatar_url}
+                  date={note.created_at}
+                  handleDeleteNote={handleDeleteNote}
+                />
+              ))}
           </section>
           {showModal && (
             <Modal
