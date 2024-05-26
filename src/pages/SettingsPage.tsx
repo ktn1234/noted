@@ -33,7 +33,7 @@ function SettingsPage() {
     setLoading(true);
     const profile: TablesInsert<"profiles"> = {
       id: user.id,
-      username,
+      username: username?.toLowerCase(),
       full_name,
       avatar_url,
       website,

@@ -15,6 +15,8 @@ function ProfilePage() {
   useEffect(() => {
     if (!username) return;
 
+    console.log("[DEBUG] Fetching profile:", username);
+
     supabase
       .from("profiles")
       .select(
