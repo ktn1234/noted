@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
+import { Navigate } from "react-router-dom";
 
 import useAuth from "../hooks/useAuth";
 
@@ -10,7 +10,7 @@ import FormInput from "../components/FormInput";
 import Button from "../components/Button";
 
 function SettingsPage() {
-  const { user } = useAuth() as { user: Session["user"] }; // Only use type assertion if component is wrapped inside Protected component
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState<string | null>(null);
   const [full_name, setFullName] = useState<string | null>(null);
@@ -19,6 +19,8 @@ function SettingsPage() {
 
   useEffect(() => {
     async function getProfile() {
+      if (!user) return;
+
       setLoading(true);
       try {
         const { data, error } = await supabase
@@ -44,12 +46,13 @@ function SettingsPage() {
     }
 
     getProfile();
-  }, []);
+  }, [user]);
 
   async function updateProfile(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // setLoading(true);
+    if (!user) return;
 
+    // setLoading(true);
     const profile: TablesInsert<"profiles"> = {
       id: user.id,
       username,
@@ -75,6 +78,7 @@ function SettingsPage() {
     window.location.reload();
   }
 
+  if (!user) return <Navigate to="/auth" />;
   if (loading) return <LoadingPage />;
 
   return (
