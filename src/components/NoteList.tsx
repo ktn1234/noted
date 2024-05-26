@@ -1,4 +1,4 @@
-import { Tables } from "../lib/supabase/types";
+import { Tables } from "../lib/supabase/database.types";
 import Note from "./Note";
 
 interface NoteListProps {

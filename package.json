@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "pwa-gen": "npx pwa-asset-generator ./public/sticky-notes.png assets --background \"#04364A\" --xhtml -w -t png -m && mv assets public/assets",
-    "supabase-gen": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" --schema public > src/lib/supabase/types.ts"
+    "supabase-gen": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" --schema public > src/lib/supabase/database.types.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.7",

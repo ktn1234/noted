@@ -7,7 +7,7 @@ import AddNote from "../components/AddNote";
 import NoteList from "../components/NoteList";
 
 import supabase from "../lib/supabase";
-import { Tables } from "../lib/supabase/types";
+import { Tables } from "../lib/supabase/database.types";
 import Modal from "../components/Modal";
 
 function HomePage(): JSX.Element {

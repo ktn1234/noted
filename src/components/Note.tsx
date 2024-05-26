@@ -1,5 +1,5 @@
 import { FaTrash } from "react-icons/fa";
-import { Tables } from "../lib/supabase/types";
+import { Tables } from "../lib/supabase/database.types";
 import supabase from "../lib/supabase";
 
 export interface NoteProps {

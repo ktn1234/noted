@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 
 import supabase from "../lib/supabase";
-import { Tables, TablesInsert } from "../lib/supabase/types";
+import { Tables, TablesInsert } from "../lib/supabase/database.types";
 
 interface AddNoteProps {
   characterLimit: number;
