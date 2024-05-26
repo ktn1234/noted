@@ -5,8 +5,8 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { AuthProvider } from "./contexts/AuthContext";
+import ThemeProvider from "./contexts/ThemeProvider";
+import AuthProvider from "./contexts/AuthProvider";
 
 import RootLayout from "./components/RootLayout";
 import HomePage from "./pages/HomePage";
