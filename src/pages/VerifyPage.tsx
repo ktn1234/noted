@@ -31,7 +31,6 @@ function VerifyPage() {
       if (error) {
         setModalText(error.message);
         setShowModal(true);
-        return;
       }
     } catch (error) {
       setModalText((error as Error).message);

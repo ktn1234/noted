@@ -25,7 +25,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithOtp({
+      const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
           shouldCreateUser: true,
@@ -41,10 +41,12 @@ function Signup() {
       if (error) {
         setModalText(error.message);
         setShowModal(true);
-        return;
       }
-      setModalText("Check your email for a cofirmation link");
-      setShowModal(true);
+
+      if (data) {
+        setModalText("Check your email for a cofirmation link");
+        setShowModal(true);
+      }
     } catch (error) {
       setModalText((error as Error).message);
       setShowModal(true);
