@@ -9,7 +9,15 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "gen:pwa": "npx pwa-asset-generator ./public/sticky-notes.png assets --background \"#04364A\" --xhtml -w -t png -m && mv assets public/assets",
-    "gen:supabase": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" --schema public > src/lib/supabase/database.types.ts"
+    "gen:supabase": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" --schema public > src/lib/supabase/database.types.ts",
+    "docker:pull:cloudbeaver": "docker pull dbeaver/cloudbeaver",
+    "docker:run:cloudbeaver:foreground": "docker run --name cloudbeaver --rm -ti -p 8080:8978 -v $(pwd)/workspace dbeaver/cloudbeaver:latest",
+    "docker:run:cloudbeaver:background": "docker run --name cloudbeaver -ti -p 8080:8978 -v $(pwd)/workspace -d --restart unless-stopped dbeaver/cloudbeaver:latest",
+    "docker:stop:cloudbeaver": "docker container stop cloudbeaver",
+    "docker:remove:cloudbeaver": "docker container rm cloudbeaver",
+    "docker:clean:images": "docker rmi $(docker images --filter 'dangling=true' -q --no-trunc) || echo 'No dangling images, cleanup complete.'",
+    "docker:clean:volumes": "docker volume rm $(docker volume ls -qf dangling=true) || echo 'No dangling volumes, cleanup complete.'",
+    "docker:logs": "docker logs -f"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.43.4",
