@@ -24,19 +24,26 @@ function AuthPage() {
     event.preventDefault();
 
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        shouldCreateUser: false,
-      },
-    });
 
-    if (error) {
-      setModalText(error.message);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: false,
+        },
+      });
+
+      if (error) {
+        setModalText(error.message);
+        setShowModal(true);
+      } else {
+        setConfirming(true);
+      }
+    } catch (error) {
+      setModalText((error as Error).message);
       setShowModal(true);
-    } else {
-      setConfirming(true);
     }
+
     setLoading(false);
   }
 
@@ -87,6 +94,12 @@ function AuthPage() {
           >
             Already have a code?
           </span>
+          <span
+            className="mt-2 cursor-pointer hover:underline"
+            onClick={() => navigate("/auth/signup")}
+          >
+            Need an account?
+          </span>
         </div>
       )}
       {!session && confirming && (
@@ -104,6 +117,7 @@ function AuthPage() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setConfirmationCode(e.target.value)
               }
+              required={true}
             />
             <Button text="Confirm" disabled={loading} />
           </form>

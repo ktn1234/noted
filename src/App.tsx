@@ -12,6 +12,7 @@ import RootLayout from "./components/RootLayout";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import AuthPage from "./pages/AuthPage";
+import Signup from "./pages/SignupPage";
 import VerifyPage from "./pages/VerifyPage";
 import Protected from "./components/Protected";
 import SettingsPage from "./pages/SettingsPage";
@@ -25,6 +26,7 @@ function App() {
             <Routes>
               <Route path="*" element={<Navigate to="/" />} />
               <Route path="/auth" element={<AuthPage />} />
+              <Route path="/auth/signup" element={<Signup />} />
               <Route path="/auth/verify" element={<VerifyPage />} />
               <Route
                 element={

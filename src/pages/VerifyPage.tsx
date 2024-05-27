@@ -20,16 +20,24 @@ function VerifyPage() {
     event.preventDefault();
 
     setLoading(true);
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: confirmationCode,
-      type: "email",
-    });
 
-    if (error) {
-      setModalText(error.message);
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: confirmationCode,
+        type: "email",
+      });
+
+      if (error) {
+        setModalText(error.message);
+        setShowModal(true);
+        return;
+      }
+    } catch (error) {
+      setModalText((error as Error).message);
       setShowModal(true);
     }
+
     setLoading(false);
   }
 
@@ -53,6 +61,7 @@ function VerifyPage() {
               setEmail(e.target.value)
             }
             autoComplete="email"
+            required={true}
           />
           <FormInput
             label="OTP"
@@ -63,6 +72,7 @@ function VerifyPage() {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setConfirmationCode(e.target.value)
             }
+            required={true}
           />
           <Button text="Confirm" disabled={loading} />
         </form>
@@ -71,6 +81,12 @@ function VerifyPage() {
           onClick={() => navigate("/auth")}
         >
           Didn't receive a code yet?
+        </span>
+        <span
+          className="mt-2 cursor-pointer hover:underline"
+          onClick={() => navigate("/auth/signup")}
+        >
+          Need an account?
         </span>
       </div>
       {showModal && (
