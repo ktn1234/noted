@@ -44,6 +44,9 @@ function Note({
             <TbGhost2
               className="w-8 h-8 rounded-full cursor-pointer"
               size={200}
+              onClick={() => {
+                navigate(`/profiles/${username}`);
+              }}
             />
           )}
           {handleDeleteNote && (
