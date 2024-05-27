@@ -23,7 +23,13 @@ function FormInput({
 }: FormInputProps): JSX.Element {
   return (
     <div className="bg-tertiary dark:bg-secondary rounded-md p-2 mb-5">
-      <label className="text-xs" htmlFor={htmlFor}>
+      <label
+        className={`text-xs ${
+          required &&
+          "after:content-['*'] after:ml-0.5 after:text-quaternary dark:after:text-primary"
+        }`}
+        htmlFor={htmlFor}
+      >
         {label}
       </label>
       <input

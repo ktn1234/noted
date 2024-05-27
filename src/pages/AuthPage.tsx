@@ -85,6 +85,7 @@ function AuthPage() {
                 setEmail(e.target.value)
               }
               autoComplete="email"
+              required={true}
             />
             <Button text="Send Code" disabled={loading} />
           </form>
