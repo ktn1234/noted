@@ -89,7 +89,6 @@ function SettingsPage() {
           type="text"
           value={full_name || ""}
           onChange={(e) => setFullName(e.target.value)}
-          required
         />
         <FormInput
           htmlFor="website"
@@ -97,7 +96,6 @@ function SettingsPage() {
           type="text"
           value={website || ""}
           onChange={(e) => setWebsite(e.target.value)}
-          required
         />
         <FormInput
           htmlFor="avatarUrl"
@@ -105,7 +103,6 @@ function SettingsPage() {
           type="text"
           value={avatar_url || ""}
           onChange={(e) => setAvatarUrl(e.target.value)}
-          required
         />
         <div className="md:col-span-2 lg:col-span-3 ">
           <Button text="Update" disabled={loading} />

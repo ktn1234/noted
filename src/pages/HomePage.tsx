@@ -104,7 +104,7 @@ function HomePage(): JSX.Element {
                 note.text.toLowerCase().includes(searchText.toLowerCase())
               )
               .map((note) =>
-                note.profiles?.username === profile?.username ? (
+                note.profiles?.user_id === profile?.user_id ? (
                   <Note
                     key={note.id}
                     id={note.id}

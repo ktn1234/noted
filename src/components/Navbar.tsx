@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FaStickyNote } from "react-icons/fa";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
-import { IoMdPerson } from "react-icons/io";
+import { TbGhost2 } from "react-icons/tb";
 
 import useAuth from "../hooks/useAuth";
 import useTheme from "../hooks/useTheme";
@@ -78,7 +78,7 @@ function Navbar(): JSX.Element {
               />
             )}
             {!profile?.avatar_url && (
-              <IoMdPerson
+              <TbGhost2
                 onClick={() => setDisplayDropdown(!displayDropdown)}
                 className="cursor-pointer hover:text-secondary focus:text-secondary dark:hover:text-quaternary dark:focus:text-quaternary"
                 size="1.5em"

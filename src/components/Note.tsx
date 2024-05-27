@@ -1,4 +1,5 @@
 import { FaTrash } from "react-icons/fa";
+import { TbGhost2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
 
 export interface NoteProps {
@@ -6,7 +7,7 @@ export interface NoteProps {
   text: string;
   date: string;
   username: string;
-  avatar_url: string;
+  avatar_url: string | null;
   handleDeleteNote?: (id: number) => void;
 }
 
@@ -30,14 +31,21 @@ function Note({
       <div className="flex items-center justify-between">
         <small>{dateString}</small>
         <div className="flex items-center">
-          <img
-            src={avatar_url}
-            alt="Profile Picture"
-            className="w-8 h-8 rounded-full cursor-pointer"
-            onClick={() => {
-              navigate(`/profiles/${username}`);
-            }}
-          />
+          {avatar_url ? (
+            <img
+              src={avatar_url}
+              alt="Profile Picture"
+              className="w-8 h-8 rounded-full cursor-pointer"
+              onClick={() => {
+                navigate(`/profiles/${username}`);
+              }}
+            />
+          ) : (
+            <TbGhost2
+              className="w-8 h-8 rounded-full cursor-pointer"
+              size={200}
+            />
+          )}
           {handleDeleteNote && (
             <FaTrash
               className="ml-3 cursor-pointer"
