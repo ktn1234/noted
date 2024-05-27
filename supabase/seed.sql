@@ -28,6 +28,24 @@ CREATE TABLE public.profiles (
 );
 
 -- Row Level Security Policies ---
+ALTER TABLE public.notes enable row level security;
+ALTER TABLE public.profiles enable row level security;
+
+-- Policies ---
+-- public.notes
+CREATE POLICY "Authenticated Users can CREATE notes" ON public.notes TO authenticated with CHECK ( ((SELECT auth.uid() AS uid) = user_id) ); 
+CREATE POLICY "Authenticated Users can READ other Authenticated Users' notes" ON public.notes TO authenticated using (true);
+CREATE POLICY "Authenticated Users can only UPDATE notes they wrote" ON public.notes TO authenticated using ( (( SELECT auth.uid() AS uid) = user_id) );
+CREATE POLICY "Authenticated Users can only DELETE notes they wrote" ON public.notes TO authenticated using ( (( SELECT auth.uid() AS uid) = user_id) );
+
+-- public.profiles
+-- CREATE POLICY "Everyone can CREATE a profile" ON public.profiles TO public with CHECK (true); -- This policy is not needed for the Noted app, but it's here for demonstration purposes
+CREATE POLICY "Authenticated Users can READ other Authenticated Users' Profile" ON public.profiles TO authenticated using (true);
+CREATE POLICY "Authenticated Users can only UPDATE their own profile" ON public.profiles TO authenticated using ( (( SELECT auth.uid() AS uid) = user_id) );
+
+-- Users can't delete their profile - must be done through the dashboard (basically contacting the admin) 
+-- CREATE POLICY "Authenticated Users can only DELETE their own profile" ON public.profiles TO authenticated using ( (( SELECT auth.uid() AS uid) = user_id) ); -- This policy is not needed for the Noted app, but it's here for demonstration purposes
+
 -- Functions ---
 -- DROP FUNCTION public.handle_new_user();
 CREATE OR REPLACE FUNCTION public.handle_new_user()
