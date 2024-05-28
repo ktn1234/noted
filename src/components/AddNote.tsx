@@ -3,7 +3,10 @@ import { useState, ChangeEvent } from "react";
 const CHARACTER_LIMIT = 200;
 
 interface AddNoteProps {
-  handleSaveNote: (text: string) => void;
+  handleSaveNote: (
+    text: string,
+    setText: React.Dispatch<React.SetStateAction<string>>
+  ) => Promise<void>;
 }
 
 function AddNote({ handleSaveNote }: AddNoteProps): JSX.Element {
@@ -28,7 +31,10 @@ function AddNote({ handleSaveNote }: AddNoteProps): JSX.Element {
       ></textarea>
       <div className="flex items-center justify-between dark:text-tertiary text-secondary">
         <small>{CHARACTER_LIMIT - text.length} Remaining</small>
-        <button className="save" onClick={() => handleSaveNote(text)}>
+        <button
+          className="save"
+          onClick={async () => handleSaveNote(text, setText)}
+        >
           Save
         </button>
       </div>

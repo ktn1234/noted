@@ -55,7 +55,10 @@ function HomePage(): JSX.Element {
     setIsRefreshing(false);
   }
 
-  async function handleSaveNote(text: string) {
+  async function handleSaveNote(
+    text: string,
+    setText: React.Dispatch<React.SetStateAction<string>>
+  ) {
     if (text.trim().length === 0) {
       setModalText("Note cannot be empty");
       setShowModal(true);
@@ -77,6 +80,7 @@ function HomePage(): JSX.Element {
 
       if (data) {
         setNotes([data, ...notes]);
+        setText("");
       }
     } catch (error) {
       console.error("[ERROR] Error saving note", error);
