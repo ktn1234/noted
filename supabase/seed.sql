@@ -47,6 +47,7 @@ CREATE POLICY "Authenticated Users can only UPDATE their own profile" ON public.
 -- CREATE POLICY "Authenticated Users can only DELETE their own profile" ON public.profiles TO authenticated using ( (( SELECT auth.uid() AS uid) = user_id) ); -- This policy is not needed for the Noted app, but it's here for demonstration purposes
 
 -- Functions ---
+-- handle_new_user() from https://supabase.com/docs/guides/auth/managing-user-data
 -- DROP FUNCTION public.handle_new_user();
 CREATE OR REPLACE FUNCTION public.handle_new_user()
     RETURNS trigger
@@ -74,6 +75,7 @@ $function$
 ;
 
 --- Triggers ---
+-- on_auth_user_created from https://supabase.com/docs/guides/auth/managing-user-data
 -- trigger the function every time a user is created
 create trigger on_auth_user_created
   after insert on auth.users
