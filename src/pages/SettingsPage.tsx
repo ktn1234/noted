@@ -16,6 +16,8 @@ function SettingsPage() {
   const [full_name, setFullName] = useState<string | null>(null);
   const [website, setWebsite] = useState<string | null>(null);
   const [avatar_url, setAvatarUrl] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
     if (user && profile) {
@@ -26,11 +28,23 @@ function SettingsPage() {
     }
   }, [user, profile]);
 
+  // This function updates the user profile and auth metadata simulated as a transaction but in reality, it's two separate operations that has no rollback mechanism if one fails.
   async function updateProfile(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!user) return;
+    setSuccessMessage("");
+    setErrorMessage("");
 
+    event.preventDefault();
     setLoading(true);
+    await updateUserProfile();
+    await updateAuthMetadata();
+
+    if (!errorMessage) {
+      setSuccessMessage("Profile updated successfully");
+    }
+    setLoading(false);
+  }
+
+  async function updateUserProfile() {
     const profile: TablesInsert<"profiles"> = {
       username: username?.toLowerCase(),
       full_name,
@@ -47,15 +61,39 @@ function SettingsPage() {
 
       if (error) {
         console.error("[ERROR] Error updating profile:", error);
+        setErrorMessage("Error updating user profile");
       }
 
       if (data) {
+        console.debug("[DEBUG] Success User Profile updated");
         setProfile(data);
       }
     } catch (error) {
       console.error("[ERROR] Error updating profile:", error);
     }
-    setLoading(false);
+  }
+
+  async function updateAuthMetadata() {
+    const { data, error } = await supabase.auth.updateUser({
+      data: {
+        username,
+        full_name,
+        avatar_url,
+        website,
+      },
+    });
+
+    if (error) {
+      console.error("[ERROR] Error updating auth metadata:", error);
+      setErrorMessage((prev) => {
+        if (prev) return "Error updating user profile and auth metadata";
+        return prev + "Error updating auth metadata";
+      });
+    }
+
+    if (data.user) {
+      console.debug("[DEBUG] Success Auth metadata updated");
+    }
   }
 
   if (!user) return <Navigate to="/auth" />;
@@ -106,6 +144,10 @@ function SettingsPage() {
         />
         <div className="md:col-span-2 lg:col-span-3 ">
           <Button text="Update" disabled={loading} />
+        </div>
+        <div className="md:col-span-2 lg:col-span-3 mt-2">
+          {successMessage && <p className="text-center">{successMessage}</p>}
+          {errorMessage && <p className="text-center">{errorMessage}</p>}
         </div>
       </form>
     </div>
