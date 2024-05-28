@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { TbGhost2 } from "react-icons/tb";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ function Note({
   avatar_url,
   handleDeleteNote,
 }: NoteProps) {
+  const [showUsername, setShowUsername] = useState(false);
   const navigate = useNavigate();
   const dateString = new Date(date).toLocaleString();
 
@@ -32,22 +34,42 @@ function Note({
         <small>{dateString}</small>
         <div className="flex items-center">
           {avatar_url ? (
-            <img
-              src={avatar_url}
-              alt="Profile Picture"
-              className="w-8 h-8 rounded-full cursor-pointer"
-              onClick={() => {
-                navigate(`/profiles/${username}`);
-              }}
-            />
+            <div
+              onMouseEnter={() => setShowUsername(true)}
+              onMouseLeave={() => setShowUsername(false)}
+            >
+              <img
+                src={avatar_url}
+                alt="Profile Picture"
+                className="w-8 h-8 rounded-full cursor-pointer"
+                onClick={() => {
+                  navigate(`/profiles/${username}`);
+                }}
+              />
+              {showUsername && (
+                <div className="absolute mt-2 p-2 rounded-md text-quaternary bg-primary dark:text-primary dark:bg-tertiary">
+                  {username}
+                </div>
+              )}
+            </div>
           ) : (
-            <TbGhost2
-              className="w-8 h-8 rounded-full cursor-pointer"
-              size={200}
-              onClick={() => {
-                navigate(`/profiles/${username}`);
-              }}
-            />
+            <div
+              onMouseEnter={() => setShowUsername(true)}
+              onMouseLeave={() => setShowUsername(false)}
+            >
+              <TbGhost2
+                className="w-8 h-8 rounded-full cursor-pointer"
+                size={200}
+                onClick={() => {
+                  navigate(`/profiles/${username}`);
+                }}
+              />
+              {showUsername && (
+                <div className="absolute mt-2 p-2 rounded-md text-quaternary bg-primary dark:text-primary dark:bg-tertiary">
+                  {username}
+                </div>
+              )}
+            </div>
           )}
           {handleDeleteNote && (
             <FaTrash
