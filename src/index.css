@@ -18,9 +18,8 @@ body {
   @apply bg-quaternary dark:bg-primary;
 }
 
-/* TODO: Figure out how to get autofill colors for dark mode toggling */
 /* Autofill Light Mode */
-/* input:-webkit-autofill,
+input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
@@ -29,16 +28,16 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
   box-shadow: inset 0 0 20px 20px #64ccc5;
   caret-color: #176b87;
-} */
+}
 
 /* Autofill Dark Mode */
-/* input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
+.dark input:-webkit-autofill,
+.dark :-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
   -webkit-background-clip: text;
   -webkit-text-fill-color: #dafffb;
   transition: background-color 5000s ease-in-out 0s;
   box-shadow: inset 0 0 20px 20px #176b87;
   caret-color: #64ccc5;
-} */
+}
