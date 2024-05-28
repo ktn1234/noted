@@ -136,6 +136,12 @@ function Signup() {
         >
           Already have an account and received a code?
         </span>
+        <span
+          className="mt-2 cursor-pointer hover:underline"
+          onClick={() => navigate("/auth/resend-confirmation")}
+        >
+          Need us to resend a confirmation email?
+        </span>
       </div>
       {showModal && (
         <Modal

@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import AuthPage from "./pages/AuthPage";
 import Signup from "./pages/SignupPage";
+import ResendConfirmationPage from "./pages/ResendConfirmationPage";
 import VerifyPage from "./pages/VerifyPage";
 import Protected from "./components/Protected";
 import SettingsPage from "./pages/SettingsPage";
@@ -28,6 +29,10 @@ function App() {
               <Route path="/auth" element={<AuthPage />} />
               <Route path="/auth/signup" element={<Signup />} />
               <Route path="/auth/verify" element={<VerifyPage />} />
+              <Route
+                path="/auth/resend-confirmation"
+                element={<ResendConfirmationPage />}
+              />
               <Route
                 element={
                   <Protected>
