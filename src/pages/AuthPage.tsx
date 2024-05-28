@@ -95,12 +95,12 @@ function AuthPage() {
           >
             Already have a code?
           </span>
-          <span
+          {/* <span
             className="mt-2 cursor-pointer hover:underline"
             onClick={() => navigate("/auth/signup")}
           >
             Need an account?
-          </span>
+          </span> */}
         </div>
       )}
       {!session && confirming && (
