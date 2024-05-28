@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import { TbGhost2 } from "react-icons/tb";
-import { useNavigate } from "react-router-dom";
 
 export interface NoteProps {
   id: number;

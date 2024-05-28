@@ -1,14 +1,15 @@
 import { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 
-import supabase from "../lib/supabase";
+import useAuth from "../hooks/useAuth";
 
 import LoadingPage from "./LoadingPage";
 
 import FormInput from "../components/FormInput";
 import Button from "../components/Button";
 import Modal from "../components/Modal";
-import useAuth from "../hooks/useAuth";
-import { Navigate, useNavigate } from "react-router-dom";
+
+import supabase from "../lib/supabase";
 
 function AuthPage() {
   const { session } = useAuth();

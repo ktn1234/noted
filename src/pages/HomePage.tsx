@@ -8,11 +8,10 @@ import LoadingPage from "./LoadingPage";
 import Search from "../components/Search";
 import AddNote from "../components/AddNote";
 import Note from "../components/Note";
+import Modal from "../components/Modal";
 
 import supabase from "../lib/supabase";
 import { NotesJoinProfile } from "../lib/supabase/query.types";
-
-import Modal from "../components/Modal";
 
 function HomePage(): JSX.Element {
   const { user, profile } = useAuth();

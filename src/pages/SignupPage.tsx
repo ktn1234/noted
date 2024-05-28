@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+
 import useAuth from "../hooks/useAuth";
+
+import LoadingPage from "./LoadingPage";
+
 import Button from "../components/Button";
 import FormInput from "../components/FormInput";
-import { useState } from "react";
-import supabase from "../lib/supabase";
 import Modal from "../components/Modal";
-import LoadingPage from "./LoadingPage";
+
+import supabase from "../lib/supabase";
 
 function Signup() {
   const { session } = useAuth();

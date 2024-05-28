@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaStickyNote } from "react-icons/fa";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import { TbGhost2 } from "react-icons/tb";
@@ -7,7 +8,6 @@ import useAuth from "../hooks/useAuth";
 import useTheme from "../hooks/useTheme";
 
 import supabase from "../lib/supabase";
-import { useNavigate } from "react-router-dom";
 
 function Navbar(): JSX.Element {
   const { profile } = useAuth();

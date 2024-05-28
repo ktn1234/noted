@@ -3,11 +3,13 @@ import { Navigate } from "react-router-dom";
 
 import useAuth from "../hooks/useAuth";
 
-import supabase from "../lib/supabase";
-import { TablesInsert } from "../lib/supabase/database.types";
 import LoadingPage from "./LoadingPage";
+
 import FormInput from "../components/FormInput";
 import Button from "../components/Button";
+
+import supabase from "../lib/supabase";
+import { TablesInsert } from "../lib/supabase/database.types";
 
 function SettingsPage() {
   const { user, profile, setProfile } = useAuth();

@@ -1,8 +1,11 @@
-import { User, Session } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
+import { User, Session } from "@supabase/supabase-js";
+
 import supabase from "../lib/supabase";
 import { Tables } from "../lib/supabase/database.types";
+
 import LoadingPage from "../pages/LoadingPage";
+
 import { AuthContext } from "./AuthContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

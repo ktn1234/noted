@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import supabase from "../lib/supabase";
 import { TbGhost2 } from "react-icons/tb";
-import LoadingPage from "./LoadingPage";
-import { ProfileJoinNotes } from "../lib/supabase/query.types";
-import Note from "../components/Note";
-import { Tables } from "../lib/supabase/database.types";
+
 import useAuth from "../hooks/useAuth";
+
+import LoadingPage from "./LoadingPage";
+
+import Note from "../components/Note";
+
+import supabase from "../lib/supabase";
+import { ProfileJoinNotes } from "../lib/supabase/query.types";
+import { Tables } from "../lib/supabase/database.types";
 
 function ProfilePage() {
   const { username } = useParams();

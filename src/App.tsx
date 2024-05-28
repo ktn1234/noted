@@ -5,17 +5,21 @@ import {
   Route,
   Routes,
 } from "react-router-dom";
+
 import ThemeProvider from "./contexts/ThemeProvider";
 import AuthProvider from "./contexts/AuthProvider";
 
 import RootLayout from "./components/RootLayout";
-import HomePage from "./pages/HomePage";
-import ProfilePage from "./pages/ProfilePage";
+
 import AuthPage from "./pages/AuthPage";
+import VerifyPage from "./pages/VerifyPage";
+
 // import Signup from "./pages/SignupPage";
 // import ResendConfirmationPage from "./pages/ResendConfirmationPage";
-import VerifyPage from "./pages/VerifyPage";
+
 import Protected from "./components/Protected";
+import HomePage from "./pages/HomePage";
+import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 
 function App() {
@@ -27,8 +31,8 @@ function App() {
             <Routes>
               <Route path="*" element={<Navigate to="/" />} />
               <Route path="/auth" element={<AuthPage />} />
-              {/* <Route path="/auth/signup" element={<Signup />} /> */}
               <Route path="/auth/verify" element={<VerifyPage />} />
+              {/* <Route path="/auth/signup" element={<Signup />} /> */}
               {/* <Route
                 path="/auth/resend-confirmation"
                 element={<ResendConfirmationPage />}
