@@ -7,6 +7,7 @@ import LoadingPage from "./LoadingPage";
 
 import Search from "../components/Search";
 import AddNote from "../components/AddNote";
+import LoadingIndicator from "../components/LoadingIndicator";
 import Note from "../components/Note";
 import Modal from "../components/Modal";
 
@@ -128,7 +129,7 @@ function HomePage(): JSX.Element {
                 />
               </span>
             </div>
-            {isRefreshing && <LoadingPage />}
+            {isRefreshing && <LoadingIndicator className="mt-5" />}
             {!isRefreshing &&
               notes
                 .filter((note) =>
