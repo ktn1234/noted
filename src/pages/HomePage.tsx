@@ -112,6 +112,10 @@ function HomePage(): JSX.Element {
 
   if (loading) return <LoadingPage />;
 
+  const filteredNotes = notes.filter((note) =>
+    note.text.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   return (
     <>
       {!loading && !!notes.length && (
@@ -135,32 +139,28 @@ function HomePage(): JSX.Element {
             </div>
             {isRefreshing && <LoadingIndicator className="mt-5" />}
             {!isRefreshing &&
-              notes
-                .filter((note) =>
-                  note.text.toLowerCase().includes(searchText.toLowerCase())
+              filteredNotes.map((note) =>
+                note.profiles?.user_id === profile?.user_id ? (
+                  <Note
+                    key={note.id}
+                    id={note.id}
+                    text={note.text}
+                    username={note.profiles!.username as string}
+                    avatar_url={note.profiles!.avatar_url as string}
+                    date={note.created_at}
+                    handleDeleteNote={handleDeleteNote}
+                  />
+                ) : (
+                  <Note
+                    key={note.id}
+                    id={note.id}
+                    text={note.text}
+                    username={note.profiles!.username as string}
+                    avatar_url={note.profiles!.avatar_url as string}
+                    date={note.created_at}
+                  />
                 )
-                .map((note) =>
-                  note.profiles?.user_id === profile?.user_id ? (
-                    <Note
-                      key={note.id}
-                      id={note.id}
-                      text={note.text}
-                      username={note.profiles!.username as string}
-                      avatar_url={note.profiles!.avatar_url as string}
-                      date={note.created_at}
-                      handleDeleteNote={handleDeleteNote}
-                    />
-                  ) : (
-                    <Note
-                      key={note.id}
-                      id={note.id}
-                      text={note.text}
-                      username={note.profiles!.username as string}
-                      avatar_url={note.profiles!.avatar_url as string}
-                      date={note.created_at}
-                    />
-                  )
-                )}
+              )}
           </section>
           {showModal && (
             <Modal
