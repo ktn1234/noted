@@ -16,6 +16,7 @@ html {
 body {
   @apply text-primary dark:text-tertiary;
   @apply bg-quaternary dark:bg-primary;
+  @apply transition-colors duration-500;
 }
 
 /* Autofill Light Mode */
