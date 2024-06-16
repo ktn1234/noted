@@ -10,6 +10,15 @@ CREATE TABLE public.notes (
 	CONSTRAINT notes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.profiles(user_id)
 );
 
+-- DROP TABLE public.note_likes;
+CREATE TABLE public.note_likes (
+    liked_at timestamptz DEFAULT now() NOT NULL,
+    note_id int8 NOT NULL,
+    user_id uuid DEFAULT auth.uid() NOT NULL,
+    CONSTRAINT note_likes_pkey PRIMARY KEY (note_id, user_id),
+    CONSTRAINT note_likes_note_id_fkey FOREIGN KEY (note_id) REFERENCES public.notes(id),
+    CONSTRAINT note_likes_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
 
 -- DROP TABLE public.profiles;
 CREATE TABLE public.profiles (
