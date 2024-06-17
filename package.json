@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "gen:pwa": "npx pwa-asset-generator ./public/sticky-notes.png assets --background \"#04364A\" --xhtml -w -t png -m && mv assets public/assets",
     "gen:supabase": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" --schema public > src/lib/supabase/database.types.ts",
+    "gen:vapid-keys": "npx web-push generate-vapid-keys --json",
     "docker:pull:cloudbeaver": "docker pull dbeaver/cloudbeaver",
     "docker:run:cloudbeaver:foreground": "docker run --name cloudbeaver --rm -ti -p 8080:8978 -v $(pwd)/workspace dbeaver/cloudbeaver:latest",
     "docker:run:cloudbeaver:background": "docker run --name cloudbeaver -ti -p 8080:8978 -v $(pwd)/workspace -d --restart unless-stopped dbeaver/cloudbeaver:latest",
@@ -41,8 +42,9 @@
     "supabase": "1.167.4",
     "tailwindcss": "3.4.3",
     "typescript": "5.4.5",
-    "vite": "5.2.11",
+    "vite": "5.3.1",
     "vite-plugin-pwa": "0.20.0",
+    "web-push": "^3.6.7",
     "workbox-build": "7.1.0",
     "workbox-window": "7.1.0"
   }
