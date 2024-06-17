@@ -49,7 +49,7 @@ function VerifyPage() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full max-h-full">
+      <main className="flex flex-col items-center w-full max-h-full">
         <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
           {"Enter your email and the OTP Code sent to your email"}
         </p>
@@ -91,7 +91,7 @@ function VerifyPage() {
         >
           Need an account?
         </span> */}
-      </div>
+      </main>
       {showModal && (
         <Modal
           text={modalText}

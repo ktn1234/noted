@@ -52,7 +52,7 @@ function ResendConfirmationPage() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full max-h-full">
+      <main className="flex flex-col items-center w-full max-h-full">
         <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
           {"Resend Confirmation Email"}
         </p>
@@ -89,7 +89,7 @@ function ResendConfirmationPage() {
         >
           Already have an account and received a code?
         </span>
-      </div>
+      </main>
       {showModal && (
         <Modal
           text={modalText}
