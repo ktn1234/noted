@@ -102,7 +102,7 @@ function SettingsPage() {
   if (loading) return <LoadingPage />;
 
   return (
-    <div className="p-3 md:p-5">
+    <main className="p-3 md:p-5">
       <h1 className="text-2xl text-center">Settings</h1>
       <form
         className="grid grid-cols-1 md:grid-cols-2 md:gap-2 lg:grid-cols-3 "
@@ -152,7 +152,7 @@ function SettingsPage() {
           {errorMessage && <p className="text-center">{errorMessage}</p>}
         </div>
       </form>
-    </div>
+    </main>
   );
 }
 

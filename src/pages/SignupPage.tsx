@@ -64,7 +64,7 @@ function Signup() {
 
   return (
     <>
-      <div className="flex flex-col items-center w-full max-h-full">
+      <main className="flex flex-col items-center w-full max-h-full">
         <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
           {"Sign Up"}
         </p>
@@ -146,7 +146,7 @@ function Signup() {
         >
           Need us to resend a confirmation email?
         </span>
-      </div>
+      </main>
       {showModal && (
         <Modal
           text={modalText}

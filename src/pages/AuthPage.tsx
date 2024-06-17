@@ -71,7 +71,7 @@ function AuthPage() {
   return (
     <>
       {!session && !confirming && (
-        <div className="flex flex-col items-center w-full max-h-full">
+        <main className="flex flex-col items-center w-full max-h-full">
           <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
             {"Enter your email to receive a OTP Code to sign in"}
           </p>
@@ -102,10 +102,10 @@ function AuthPage() {
           >
             Need an account?
           </span> */}
-        </div>
+        </main>
       )}
       {!session && confirming && (
-        <div className="flex flex-col items-center w-full max-h-full">
+        <main className="flex flex-col items-center w-full max-h-full">
           <p className="pt-3 md:pt-5 mb-5 text-xl text-center mx-5">
             {"Enter the OTP Code sent to your email"}
           </p>
@@ -123,7 +123,7 @@ function AuthPage() {
             />
             <Button text="Confirm" disabled={loading} />
           </form>
-        </div>
+        </main>
       )}
       {showModal && (
         <Modal

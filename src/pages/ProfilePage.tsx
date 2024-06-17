@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { TbGhost2 } from "react-icons/tb";
+import { IoNotifications } from "react-icons/io5";
 
 import useAuth from "../hooks/useAuth";
 
@@ -19,8 +20,12 @@ function ProfilePage() {
   const [profile, setProfile] = useState<ProfileJoinNotes | null>(null);
   const [notes, setNotes] = useState<Tables<"notes">[]>([]);
 
-  useEffect(() => {
-    if (!username) return;
+  useMemo(() => {
+    setLoading(true);
+    if (!username) {
+      setLoading(false);
+      return;
+    }
 
     supabase
       .from("profiles")
@@ -78,7 +83,15 @@ function ProfilePage() {
             <TbGhost2 className="w-16 h-16 rounded-full" size={200} />
           )}
           <section>
-            <p className="mt-5">Username: {username}</p>
+            <div className="mt-5 w-full">
+              {user.profile?.id !== profile.id && (
+                <IoNotifications
+                  className="mb-2 cursor-pointer rounded-full p-1 border-2 border-tertiary text-secondary hover:bg-tertiary hover:text-primary dark:text-tertiary dark:border-secondary dark:hover:text-quaternary dark:hover:bg-secondary"
+                  size="30"
+                />
+              )}
+              <p>Username: {username}</p>
+            </div>
             {profile.full_name && <p>Full Name: {profile.full_name}</p>}
             {profile.website && (
               <p>
