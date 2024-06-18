@@ -114,6 +114,42 @@ export type Database = {
           },
         ]
       }
+      subscriptions: {
+        Row: {
+          created_at: string
+          id: number
+          subscriber_user_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          subscriber_user_id?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          subscriber_user_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_subscriber_user_id_fkey"
+            columns: ["subscriber_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+          {
+            foreignKeyName: "subscriptions_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
