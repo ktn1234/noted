@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { TbGhost2 } from "react-icons/tb";
-import { IoNotifications } from "react-icons/io5";
+import { IoNotifications, IoNotificationsOffSharp } from "react-icons/io5";
 
 import useAuth from "../hooks/useAuth";
 
@@ -11,17 +11,19 @@ import Note from "../components/Note";
 
 import supabase from "../lib/supabase";
 import { ProfileJoinNotes } from "../lib/supabase/query.types";
-import { Tables } from "../lib/supabase/database.types";
 
 function ProfilePage() {
-  const { username } = useParams();
+  const { username } = useParams<{ username: string }>();
   const user = useAuth();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<ProfileJoinNotes | null>(null);
-  const [notes, setNotes] = useState<Tables<"notes">[]>([]);
 
-  useMemo(() => {
+  // State that represents if the user is subscribed to the profile's user notifications
+  const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
+
+  useEffect(() => {
     setLoading(true);
+    if (!user.profile) return;
     if (!username) {
       setLoading(false);
       return;
@@ -36,15 +38,37 @@ function ProfilePage() {
         referencedTable: "notes",
       })
       .single()
-      .then(({ data, error }) => {
-        if (error) console.error("[ERROR] Error fetching profile:", error);
-        if (data) {
-          setProfile(data);
-          setNotes(data.notes);
+      .then(({ data: currentProfile, error }) => {
+        if (error) {
+          console.error("[ERROR] Error fetching profile:", error);
+          return;
+        }
+
+        if (currentProfile && user.profile) {
+          if (user.profile.username !== currentProfile.username) {
+            supabase
+              .from("subscriptions")
+              .select("*")
+              .eq("subscriber_user_id", user.profile.user_id)
+              .eq("user_id", currentProfile.user_id)
+              .then(({ data: subscriptions, error }) => {
+                if (error) {
+                  console.error("[ERROR] Error fetching subscription:", error);
+                  return;
+                }
+
+                if (subscriptions && subscriptions.length === 1) {
+                  setIsSubscribed(true);
+                } else {
+                  setIsSubscribed(false);
+                }
+                setProfile(currentProfile);
+              });
+          }
         }
         setLoading(false);
       });
-  }, [username]);
+  }, [username, user]);
 
   async function handleDeleteNote(id: number) {
     try {
@@ -59,13 +83,66 @@ function ProfilePage() {
         return;
       }
 
-      setNotes(notes.filter((note) => note.id !== id));
+      setProfile((prevProfile) => {
+        if (!prevProfile) return prevProfile;
+        return {
+          ...prevProfile,
+          notes: prevProfile.notes.filter((note) => note.id !== id),
+        };
+      });
     } catch (error) {
       console.error("[ERROR] Error deleting note:", error);
     }
   }
 
+  async function subscribeToUserNotifications() {
+    try {
+      const { status, error } = await supabase.from("subscriptions").insert({
+        subscriber_user_id: user.profile?.user_id,
+        user_id: profile?.user_id,
+      });
+
+      if (error) {
+        console.error(
+          "[ERROR] Error subscribing to user notifications:",
+          error
+        );
+        return;
+      }
+
+      if (status === 201) setIsSubscribed(true);
+    } catch (error) {
+      console.error("[ERROR] Error subscribing to user notifications:", error);
+    }
+  }
+
+  async function unsubscribeToUserNotifications() {
+    try {
+      const { status, error } = await supabase
+        .from("subscriptions")
+        .delete()
+        .eq("subscriber_user_id", user.profile?.user_id as string)
+        .eq("user_id", profile?.user_id as string);
+
+      if (error) {
+        console.error(
+          "[ERROR] Error unsubscribing to user notifications:",
+          error
+        );
+        return;
+      }
+
+      if (status === 204) setIsSubscribed(false);
+    } catch (error) {
+      console.error(
+        "[ERROR] Error unsubscribing to user notifications:",
+        error
+      );
+    }
+  }
+
   if (loading) return <LoadingPage />;
+  if (!user.profile) return <LoadingPage />;
 
   return (
     <main className="p-3 md:p-5">
@@ -84,12 +161,20 @@ function ProfilePage() {
           )}
           <section>
             <div className="mt-5 w-full">
-              {user.profile?.id !== profile.id && (
-                <IoNotifications
-                  className="mb-2 cursor-pointer rounded-full p-1 border-2 border-tertiary text-secondary hover:bg-tertiary hover:text-primary dark:text-tertiary dark:border-secondary dark:hover:text-quaternary dark:hover:bg-secondary"
-                  size="30"
-                />
-              )}
+              {user.profile.id !== profile.id &&
+                (isSubscribed ? (
+                  <IoNotificationsOffSharp
+                    className="mb-2 cursor-pointer rounded-full p-1 border-2 border-tertiary text-secondary hover:bg-tertiary hover:text-primary dark:text-tertiary dark:border-secondary dark:hover:text-quaternary dark:hover:bg-secondary"
+                    size="30"
+                    onClick={unsubscribeToUserNotifications}
+                  />
+                ) : (
+                  <IoNotifications
+                    className="mb-2 cursor-pointer rounded-full p-1 border-2 border-tertiary text-secondary hover:bg-tertiary hover:text-primary dark:text-tertiary dark:border-secondary dark:hover:text-quaternary dark:hover:bg-secondary"
+                    size="30"
+                    onClick={subscribeToUserNotifications}
+                  />
+                ))}
               <p>Username: {username}</p>
             </div>
             {profile.full_name && <p>Full Name: {profile.full_name}</p>}
@@ -108,8 +193,8 @@ function ProfilePage() {
           </section>
           <h2 className="text-2xl text-center mt-5">Notes</h2>
           <ul className="flex flex-col gap-2 w-full md:w-[50%]">
-            {notes.length > 0 ? (
-              notes.map((note) => (
+            {profile.notes.length > 0 ? (
+              profile.notes.map((note) => (
                 <li key={note.id}>
                   {username === user.profile?.username ? (
                     <Note
