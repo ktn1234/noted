@@ -41,35 +41,67 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string
+          endpoint: string | null
+          id: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          endpoint?: string | null
+          id?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string | null
+          id?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
-          created_at: string | null
+          created_at: string
           full_name: string | null
           id: number
-          updated_at: string | null
+          updated_at: string
           user_id: string
-          username: string | null
+          username: string
           website: string | null
         }
         Insert: {
           avatar_url?: string | null
-          created_at?: string | null
+          created_at?: string
           full_name?: string | null
           id?: number
-          updated_at?: string | null
+          updated_at?: string
           user_id?: string
-          username?: string | null
+          username: string
           website?: string | null
         }
         Update: {
           avatar_url?: string | null
-          created_at?: string | null
+          created_at?: string
           full_name?: string | null
           id?: number
-          updated_at?: string | null
+          updated_at?: string
           user_id?: string
-          username?: string | null
+          username?: string
           website?: string | null
         }
         Relationships: [
