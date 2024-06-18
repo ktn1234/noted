@@ -24,6 +24,12 @@ function Note({
   const navigate = useNavigate();
   const dateString = new Date(date).toLocaleString();
 
+  function navigateToProfile() {
+    if (window.location.pathname !== `/profiles/${username}`) {
+      navigate(`/profiles/${username}`);
+    }
+  }
+
   return (
     <article
       key={id}
@@ -42,9 +48,7 @@ function Note({
                 src={avatar_url}
                 alt="Profile Picture"
                 className="w-8 h-8 rounded-full cursor-pointer"
-                onClick={() => {
-                  navigate(`/profiles/${username}`);
-                }}
+                onClick={navigateToProfile}
               />
               {showUsername && (
                 <div className="absolute mt-2 p-2 rounded-md text-quaternary bg-primary dark:text-primary dark:bg-tertiary">
@@ -60,9 +64,7 @@ function Note({
               <TbGhost2
                 className="w-8 h-8 rounded-full cursor-pointer"
                 size={200}
-                onClick={() => {
-                  navigate(`/profiles/${username}`);
-                }}
+                onClick={navigateToProfile}
               />
               {showUsername && (
                 <div className="absolute mt-2 p-2 rounded-md text-quaternary bg-primary dark:text-primary dark:bg-tertiary">
