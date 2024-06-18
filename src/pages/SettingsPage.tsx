@@ -47,8 +47,14 @@ function SettingsPage() {
   }
 
   async function updateUserProfile() {
+    if (!username) {
+      console.error("[ERROR] Username is required");
+      setErrorMessage("Error updating user profile");
+      return;
+    }
+
     const profile: TablesInsert<"profiles"> = {
-      username: username?.toLowerCase(),
+      username: username.toLowerCase(),
       full_name,
       avatar_url,
       website,
