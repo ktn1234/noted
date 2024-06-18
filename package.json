@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && sed -i 's/__URL_PLACEHOLDER__/https:\\/\\/noted-eight-bay.vercel.app/g' dist/index.html",
+    "build": "tsc && vite build && sed -i 's/__URL_PLACEHOLDER__/https:\\/\\/noted-eight-bay.vercel.app/g' dist/index.html && node src/scripts/add-push-notification-event-listener.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "gen:pwa": "npx pwa-asset-generator ./public/sticky-notes.png assets --background \"#04364A\" --xhtml -w -t png -m && mv assets public/assets",
@@ -38,6 +38,7 @@
     "eslint": "8.56.0",
     "eslint-plugin-react-hooks": "4.6.2",
     "eslint-plugin-react-refresh": "0.4.7",
+    "minify": "11.2.1",
     "postcss": "8.4.38",
     "pwa-asset-generator": "6.3.1",
     "supabase": "1.167.4",
