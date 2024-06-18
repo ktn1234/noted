@@ -87,6 +87,7 @@ function AuthPage() {
               }
               autoComplete="email"
               required={true}
+              autoFocus={true}
             />
             <Button text="Send Code" disabled={loading} />
           </form>
@@ -120,6 +121,7 @@ function AuthPage() {
                 setConfirmationCode(e.target.value)
               }
               required={true}
+              autoFocus={true}
             />
             <Button text="Confirm" disabled={loading} />
           </form>
