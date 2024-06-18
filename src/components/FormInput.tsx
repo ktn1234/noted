@@ -8,6 +8,7 @@ interface FormInputProps {
   autoComplete?: string;
   disabled?: boolean;
   required?: boolean;
+  autoFocus?: boolean;
 }
 
 function FormInput({
@@ -20,6 +21,7 @@ function FormInput({
   autoComplete,
   disabled,
   required,
+  autoFocus,
 }: FormInputProps): JSX.Element {
   return (
     <div className="bg-tertiary dark:bg-secondary rounded-md p-2 mb-5">
@@ -41,6 +43,7 @@ function FormInput({
         onChange={onChange}
         autoComplete={autoComplete}
         disabled={disabled}
+        autoFocus={autoFocus}
       />
     </div>
   );

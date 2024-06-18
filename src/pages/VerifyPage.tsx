@@ -65,6 +65,7 @@ function VerifyPage() {
             }
             autoComplete="email"
             required={true}
+            autoFocus={true}
           />
           <FormInput
             label="OTP"
