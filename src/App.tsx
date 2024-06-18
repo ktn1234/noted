@@ -21,6 +21,7 @@ import Protected from "./components/Protected";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
                 <Route index element={<HomePage />} />
                 <Route path="/profiles/:username" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/notifications" element={<NotificationsPage />} />
               </Route>
             </Routes>
           </RootLayout>

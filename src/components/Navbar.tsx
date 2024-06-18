@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { User } from "@supabase/supabase-js";
 import { FaStickyNote } from "react-icons/fa";
 import { MdLightMode, MdDarkMode } from "react-icons/md";
 import { TbGhost2 } from "react-icons/tb";
@@ -9,20 +10,53 @@ import useTheme from "../hooks/useTheme";
 
 import supabase from "../lib/supabase";
 
+import NotificationsIcon from "./NotificationsIcon";
+
 function Navbar(): JSX.Element {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { darkMode, toggleTheme } = useTheme();
   const [displayDropdown, setDisplayDropdown] = useState<boolean>(false);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
 
+  async function disassociateAppNotificationsFromUser(
+    user: User
+  ): Promise<boolean> {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+
+    if (subscription) {
+      const { status, error } = await supabase
+        .from("notifications")
+        .delete()
+        .eq("endpoint", JSON.stringify(subscription))
+        .eq("user_id", user?.id);
+
+      if (status !== 204 && error) {
+        console.error(
+          "[ERROR] Error disassociating app notifications from user:",
+          error
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   async function signOut() {
+    if (user) {
+      const successful = await disassociateAppNotificationsFromUser(user);
+      if (!successful) return;
+    }
+
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error("[ERROR] Error signing out:", error);
       return;
     }
+
+    setDisplayDropdown(false);
   }
 
   useEffect(() => {
@@ -66,7 +100,7 @@ function Navbar(): JSX.Element {
             size="1.5em"
           />
         )}
-
+        <NotificationsIcon />
         {user && (
           <div ref={dropDownRef}>
             {profile?.avatar_url && (
@@ -98,6 +132,15 @@ function Navbar(): JSX.Element {
                     }}
                   >
                     <span>Profile</span>
+                  </li>
+                  <li
+                    className="px-4 py-2 dark:hover:text-primary hover:text-quaternary cursor-pointer"
+                    onClick={() => {
+                      navigate("/notifications");
+                      setDisplayDropdown(false);
+                    }}
+                  >
+                    Notifications
                   </li>
                   <li
                     className="px-4 py-2 dark:hover:text-primary hover:text-quaternary cursor-pointer"
