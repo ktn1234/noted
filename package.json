@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build && sed -i 's/__URL_PLACEHOLDER__/https:\\/\\/noted-eight-bay.vercel.app/g' dist/index.html && node src/scripts/add-push-notification-event-listener.js",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
+    "preview": "vite preview --host --port 5173",
     "gen:pwa": "npx pwa-asset-generator ./public/sticky-notes.png assets --background \"#04364A\" --xhtml -w -t png -m && mv assets public/assets",
     "gen:supabase": "npx supabase gen types typescript --project-id \"$PROJECT_REF\" --schema public > src/lib/supabase/database.types.ts",
     "gen:vapid-keys": "npx web-push generate-vapid-keys --json",
@@ -18,7 +18,12 @@
     "docker:remove:cloudbeaver": "docker container rm cloudbeaver",
     "docker:clean:images": "docker rmi $(docker images --filter 'dangling=true' -q --no-trunc) || echo 'No dangling images, cleanup complete.'",
     "docker:clean:volumes": "docker volume rm $(docker volume ls -qf dangling=true) || echo 'No dangling volumes, cleanup complete.'",
-    "docker:logs": "docker logs -f"
+    "docker:logs": "docker logs -f",
+    "supabase:fn:push:deploy": "supabase functions deploy note-created-push-notification --no-verify-jwt",
+    "supabase:fn:push:delete": "supabase functions delete note-created-push-notification",
+    "supabase:secrets:set": "supabase secrets set --env-file ./supabase/.env",
+    "supabase:secrets:unset": "supabase secrets unset",
+    "supabase:secrets:list": "supabase secrets list"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.43.4",
