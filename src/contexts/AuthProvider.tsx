@@ -13,6 +13,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Tables<"profiles"> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -23,8 +24,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session && session.user) {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isSignedIn && session && session.user) {
         supabase
           .from("profiles")
           .select("*")
@@ -32,26 +35,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .single()
           .then(({ data, error }) => {
             if (error) console.error("[ERROR] Error fetching profile:", error);
-            if (data) {
-              setProfile(data);
-            }
+            if (data) setProfile(data);
           });
         setSession(session);
         setUser(session.user);
-      } else {
+        setIsSignedIn(true);
+      }
+
+      if (isSignedIn && !session) {
+        // Reset Auth statte
+        setIsSignedIn(false);
         setUser(null);
         setSession(null);
         setProfile(null);
       }
+
       setLoading(false);
     });
-  }, []);
+
+    return () => subscription.unsubscribe();
+  }, [isSignedIn]);
 
   const value = {
     user,
     session,
     profile,
     setProfile,
+    isSignedIn,
   };
 
   return (

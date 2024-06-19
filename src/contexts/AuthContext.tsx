@@ -8,6 +8,7 @@ interface AuthContextType {
   session: Session | null;
   profile: Tables<"profiles"> | null;
   setProfile: React.Dispatch<React.SetStateAction<Tables<"profiles"> | null>>;
+  isSignedIn: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -15,4 +16,5 @@ export const AuthContext = createContext<AuthContextType>({
   session: null,
   profile: null,
   setProfile: () => {},
+  isSignedIn: false,
 });

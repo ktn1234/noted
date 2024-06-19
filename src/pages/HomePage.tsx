@@ -15,7 +15,7 @@ import supabase from "../lib/supabase";
 import { NotesJoinProfile } from "../lib/supabase/query.types";
 
 function HomePage(): JSX.Element {
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
   const [notes, setNotes] = useState<NotesJoinProfile>([]);
 
@@ -25,8 +25,6 @@ function HomePage(): JSX.Element {
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!user) return;
-
     supabase
       .from("notes")
       .select("*, profiles (*)")
@@ -36,7 +34,7 @@ function HomePage(): JSX.Element {
         if (data) setNotes(data);
         setLoading(false);
       });
-  }, [user]);
+  }, []);
 
   async function handleRefreshNotes() {
     setIsRefreshing(true);
