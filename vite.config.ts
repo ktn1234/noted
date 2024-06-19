@@ -7,6 +7,10 @@ import path from "path";
 export default defineConfig(({ mode }: ConfigEnv) => {
   const isProduction = mode === "production";
   return {
+    server: {
+      port: 5173,
+      host: true,
+    },
     plugins: [
       react(),
       VitePWA({
