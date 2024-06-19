@@ -45,6 +45,10 @@ function ProfilePage() {
         }
 
         if (currentProfile && user.profile) {
+          if (user.profile.username === currentProfile.username) {
+            setProfile(currentProfile);
+          }
+
           if (user.profile.username !== currentProfile.username) {
             supabase
               .from("subscriptions")
@@ -95,11 +99,14 @@ function ProfilePage() {
     }
   }
 
-  async function subscribeToUserNotifications() {
+  async function subscribeToUserNotifications(
+    authUserId: string,
+    profileUserId: string
+  ) {
     try {
       const { status, error } = await supabase.from("subscriptions").insert({
-        subscriber_user_id: user.profile?.user_id,
-        user_id: profile?.user_id,
+        subscriber_user_id: authUserId,
+        user_id: profileUserId,
       });
 
       if (error) {
@@ -116,13 +123,16 @@ function ProfilePage() {
     }
   }
 
-  async function unsubscribeToUserNotifications() {
+  async function unsubscribeToUserNotifications(
+    authUserId: string,
+    profileUserId: string
+  ) {
     try {
       const { status, error } = await supabase
         .from("subscriptions")
         .delete()
-        .eq("subscriber_user_id", user.profile?.user_id as string)
-        .eq("user_id", profile?.user_id as string);
+        .eq("subscriber_user_id", authUserId)
+        .eq("user_id", profileUserId);
 
       if (error) {
         console.error(
@@ -141,8 +151,7 @@ function ProfilePage() {
     }
   }
 
-  if (loading) return <LoadingPage />;
-  if (!user.profile) return <LoadingPage />;
+  if (loading || !profile || !user.profile) return <LoadingPage />;
 
   return (
     <main className="p-3 md:p-5">
@@ -166,13 +175,25 @@ function ProfilePage() {
                   <IoNotificationsOffSharp
                     className="mb-2 cursor-pointer rounded-full p-1 border-2 border-tertiary text-secondary hover:bg-tertiary hover:text-primary dark:text-tertiary dark:border-secondary dark:hover:text-quaternary dark:hover:bg-secondary"
                     size="30"
-                    onClick={unsubscribeToUserNotifications}
+                    onClick={() =>
+                      user.profile?.user_id &&
+                      unsubscribeToUserNotifications(
+                        user.profile.user_id,
+                        profile.user_id
+                      )
+                    }
                   />
                 ) : (
                   <IoNotifications
                     className="mb-2 cursor-pointer rounded-full p-1 border-2 border-tertiary text-secondary hover:bg-tertiary hover:text-primary dark:text-tertiary dark:border-secondary dark:hover:text-quaternary dark:hover:bg-secondary"
                     size="30"
-                    onClick={subscribeToUserNotifications}
+                    onClick={() =>
+                      user.profile?.user_id &&
+                      subscribeToUserNotifications(
+                        user.profile.user_id,
+                        profile.user_id
+                      )
+                    }
                   />
                 ))}
               <p>Username: {username}</p>
