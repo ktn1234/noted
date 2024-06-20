@@ -27,8 +27,6 @@ interface WebhookPayload {
 }
 
 Deno.serve(async (req) => {
-  console.log("User has Inserted a Note!");
-
   const SUPABASE_URL = Deno.env.get("SUPABASE_URL") as string;
   const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get(
     "SUPABASE_SERVICE_ROLE_KEY",
@@ -38,14 +36,10 @@ Deno.serve(async (req) => {
   const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY") as string;
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  console.debug("Supabase client initialized");
-
   webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
-  console.debug("WebPush initialized");
 
   const payload: WebhookPayload = await req.json();
   const { record: { text, user_id } } = payload;
-  console.debug(`Received text from user_id (${user_id}):`, text);
 
   const { data: subscribers, error } = await supabase.from("subscriptions")
     .select(
@@ -59,12 +53,6 @@ Deno.serve(async (req) => {
     );
   }
 
-  console.debug(
-    `Found subscribers to ${user_id}:`,
-    JSON.stringify(subscribers),
-  );
-
-  let pushNotificationsSent = 0;
   for (let i = 0; i < subscribers.length; ++i) {
     const subscriberUserId = subscribers[i].subscriber_user_id;
     const { data: appNotifications, error } = await supabase.from(
@@ -82,27 +70,21 @@ Deno.serve(async (req) => {
       continue;
     }
 
-    console.debug(
-      "Subscriber's device app notifications:",
-      JSON.stringify(appNotifications),
-    );
-
     for (let j = 0; j < appNotifications.length; ++j) {
-      const endpoint = appNotifications[j].endpoint;
+      const endpoint = appNotifications[j].endpoint as string;
 
       const data = {
-        body: `New note from ${user_id} with text: ${text}`,
-        url: "http://localhost:5173/",
+        title: `New note from ${user_id}`,
+        body: text,
+        url: "http://localhost:5173/", // TODO: Update with app's URL
+        timestamp: Date.now(),
       };
 
       try {
-        console.debug(`Sending push notification to ${endpoint}`);
         await webpush.sendNotification(
           JSON.parse(endpoint),
           JSON.stringify(data),
         );
-        console.debug(`Push notification sent to ${endpoint}`);
-        pushNotificationsSent++;
       } catch (err: unknown) {
         const error = err as Error;
         console.error(
@@ -110,28 +92,26 @@ Deno.serve(async (req) => {
         );
         console.error("[ERROR]", error);
 
-        // TODO: Commented out for now for testing - uncomment when ready
-        // console.debug(
-        //   "Deleting app notification subscription for endpoint:",
-        //   endpoint,
-        // );
-        // // Delete the app notification subscription since it's invalid
-        // const { error: appNotificationDeletionError } = await supabase
-        //   .from("notifications")
-        //   .delete()
-        //   .eq("endpoint", endpoint);
+        console.debug(
+          "Deleting app notification subscription for endpoint:",
+          endpoint,
+        );
+        // Delete the app notification subscription since it's invalid
+        const { error: appNotificationDeletionError } = await supabase
+          .from("notifications")
+          .delete()
+          .eq("endpoint", endpoint);
 
-        // if (appNotificationDeletionError) {
-        //   console.error(
-        //     `[ERROR] Failed to delete app notification for endpoint ${endpoint}`,
-        //     error,
-        //   );
-        // }
+        if (appNotificationDeletionError) {
+          console.error(
+            `[ERROR] Failed to delete app notification for endpoint ${endpoint}`,
+            error,
+          );
+        }
       }
     }
   }
 
-  console.log(`Push notifications sent - ${pushNotificationsSent}`);
   return new Response(
     JSON.stringify({ message: "Push notifications sent" }),
     { status: 200, headers: { "Content-Type": "application/json" } },
