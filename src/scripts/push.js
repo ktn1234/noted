@@ -25,15 +25,37 @@ if (!VAPID_SUBJECT || !VAPID_PUBLIC_KEY || !VAPID_PRIVATE_KEY) {
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
 const data = {
-  body: "Push Notification",
+  title: "Push Notification Title",
+  body: "Body Content",
   url: "http://localhost:5173",
+  timestamp: Date.now(),
 };
 
-const endpoint = {};
+const endpoints = [];
 
 try {
-  await webpush.sendNotification(endpoint, JSON.stringify(data));
-  console.log("Push Notification Sent");
+  await Promise.all(
+    endpoints.map(async (endpoint) => {
+      const details = webpush.generateRequestDetails(
+        endpoint,
+        JSON.stringify(data)
+      );
+
+      console.log("Web Push details:", JSON.stringify(details, null, 2));
+
+      const sendResult = await webpush.sendNotification(
+        endpoint,
+        JSON.stringify(data)
+      );
+
+      console.log(`Push Notification Sent to endpoint ${endpoint.endpoint}`);
+      console.log(
+        "Push notification send result:",
+        JSON.stringify(sendResult, null, 2),
+        "\n\n"
+      );
+    })
+  );
 } catch (err) {
   console.error("[ERROR] Push Notification Error: ", err);
 }
