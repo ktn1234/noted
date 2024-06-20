@@ -41,14 +41,37 @@ Deno.serve(async (req) => {
   const payload: WebhookPayload = await req.json();
   const { record: { text, user_id } } = payload;
 
-  const { data: subscribers, error } = await supabase.from("subscriptions")
+  const { data: user, error: userQueryError } = await supabase.from("profiles")
+    .select(
+      "username",
+    ).eq("user_id", user_id)
+    .single();
+
+  if (userQueryError) {
+    console.error(
+      `[ERROR] Failed to fetch user for user_id ${user_id}`,
+      userQueryError,
+    );
+    return new Response(
+      JSON.stringify(userQueryError),
+      { status: 500, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
+  const { data: subscribers, subscriptionsQueryError } = await supabase.from(
+    "subscriptions",
+  )
     .select(
       "subscriber_user_id",
     ).eq("user_id", user_id);
 
-  if (error) {
+  if (subscriptionsQueryError) {
+    console.error(
+      `[ERROR] Failed to fetch subscribers for user_id ${user_id}`,
+      subscriptionsQueryError,
+    );
     return new Response(
-      JSON.stringify(error),
+      JSON.stringify(subscriptionsQueryError),
       { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
@@ -74,16 +97,16 @@ Deno.serve(async (req) => {
       const endpoint = appNotifications[j].endpoint as string;
 
       const data = {
-        title: `New note from ${user_id}`,
+        title: `${user.username} just made a note`,
         body: text,
-        url: "http://localhost:5173/", // TODO: Update with app's URL
+        url: "https://noted-eight-bay.vercel.app/",
         timestamp: Date.now(),
       };
 
       try {
         await webpush.sendNotification(
           JSON.parse(endpoint),
-          JSON.stringify(data),
+          // JSON.stringify(data), // TODO: Comment back in when https://github.com/web-push-libs/web-push/issues/904 gets fixed
         );
       } catch (err: unknown) {
         const error = err as Error;
@@ -113,7 +136,7 @@ Deno.serve(async (req) => {
   }
 
   return new Response(
-    JSON.stringify({ message: "Push notifications sent" }),
+    JSON.stringify({ message: "Push notification(s) sent" }),
     { status: 200, headers: { "Content-Type": "application/json" } },
   );
 });
