@@ -1,3 +1,7 @@
+# Steps to Implement Push Notifications with Supabase Edge Functions
+1. Create a Webhook called `note-created` on any insert operation on the `notes` table and trigger a Supabase Edge Function as a POST method to `note-created-push-notification` with an auth header with service key (Required if your edge function enforces JWT verification)
+2. Create a Supabase Edge Function called `note-created-push-notification` that sends a push notification to all users that are subscribed to the user that created the note via `yarn supabase:fn:push:deploy`
+
 Sending Push Notifications using Firebase Cloud Message (FCM) with Supabase - https://supabase.com/docs/guides/functions/examples/push-notifications
 
 Supabase Edge Functions
