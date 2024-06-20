@@ -1,12 +1,23 @@
 self.addEventListener("push", (e) => {
+  const promises = [];
+
   const message = e.data?.json();
-  self.registration.showNotification("Noted", {
-    body: message.body,
-    icon: "/assets/apple-icon-180.png",
-    image: "/assets/apple-icon-180.png",
-    badge: "/assets/apple-icon-180.png",
-    data: { url: message.url },
-  });
+  const { title, body, url, timestamp } = message;
+
+  promises.push(
+    self.registration.showNotification(title, {
+      body,
+      icon: "/assets/apple-icon-180.png",
+      image: "/assets/apple-icon-180.png",
+      badge: "/assets/apple-icon-180.png",
+      timestamp,
+      data: {
+        url,
+      },
+    })
+  );
+
+  e.waitUntil(Promise.all(promises));
 }),
   self.addEventListener("notificationclick", (e) => {
     const urlToOpen = new URL(e.notification.data.url, self.location.origin)
