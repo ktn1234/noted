@@ -31,6 +31,7 @@ function NotificationsIcon(): JSX.Element | null {
   const [notificationState, setNotificationState] =
     useState<NotificationState>("unknown");
   const [init, setInit] = useState<boolean>(false);
+  const [semaphore, setSemaphore] = useState<boolean>(false);
 
   async function enableNotifications(user: User) {
     try {
@@ -83,6 +84,7 @@ function NotificationsIcon(): JSX.Element | null {
 
   useEffect(() => {
     async function initNotificationState(user: User) {
+      setSemaphore(true);
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.getSubscription();
 
@@ -131,14 +133,15 @@ function NotificationsIcon(): JSX.Element | null {
       }
 
       setInit(true);
+      setSemaphore(false);
     }
 
-    if (user && !init) initNotificationState(user);
+    if (user && !init && !semaphore) initNotificationState(user);
     if (!user) {
       setNotificationState("unknown");
       setInit(false);
     }
-  }, [user, init]);
+  }, [user, init, semaphore]);
 
   if (!user || notificationState === "unknown") {
     return (
