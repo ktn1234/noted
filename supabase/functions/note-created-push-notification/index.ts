@@ -76,6 +76,7 @@ Deno.serve(async (req) => {
     );
   }
 
+  let pushNotificationsSent = 0;
   for (let i = 0; i < subscribers.length; ++i) {
     const subscriberUserId = subscribers[i].subscriber_user_id;
     const { data: appNotifications, error } = await supabase.from(
@@ -108,6 +109,7 @@ Deno.serve(async (req) => {
           JSON.parse(endpoint),
           // JSON.stringify(data), // TODO: Comment back in when https://github.com/web-push-libs/web-push/issues/904 gets fixed
         );
+        pushNotificationsSent++;
       } catch (err: unknown) {
         const error = err as Error;
         console.error(
@@ -135,6 +137,12 @@ Deno.serve(async (req) => {
     }
   }
 
+  console.log(
+    `Subscriber(s) of note creator user_id ${user_id.slice(0, 5)}...${
+      user_id.slice(-5)
+    }: ${subscribers.length}`,
+  );
+  console.log(`Push notification(s) sent: ${pushNotificationsSent}`);
   return new Response(
     JSON.stringify({ message: "Push notification(s) sent" }),
     { status: 200, headers: { "Content-Type": "application/json" } },
