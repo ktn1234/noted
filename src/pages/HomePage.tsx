@@ -15,7 +15,7 @@ import supabase from "../lib/supabase";
 import { NotesJoinProfile } from "../lib/supabase/query.types";
 
 function HomePage(): JSX.Element {
-  const { profile } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState<boolean>(true);
   const [notes, setNotes] = useState<NotesJoinProfile>([]);
 
@@ -108,7 +108,7 @@ function HomePage(): JSX.Element {
     setSearchText(e.target.value);
   }
 
-  if (loading) return <LoadingPage />;
+  if (loading || !user) return <LoadingPage />;
 
   const filteredNotes = notes.filter((note) =>
     note.text.toLowerCase().includes(searchText.toLowerCase())
@@ -138,7 +138,7 @@ function HomePage(): JSX.Element {
             {isRefreshing && <LoadingIndicator className="mt-5" />}
             {!isRefreshing &&
               filteredNotes.map((note) =>
-                note.profiles?.user_id === profile?.user_id ? (
+                note.profiles?.user_id === user.id ? (
                   <Note
                     key={note.id}
                     id={note.id}
