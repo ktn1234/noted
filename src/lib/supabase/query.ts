@@ -8,3 +8,8 @@ export const ProfileJoinNotesQuery = supabase
 export const NotesJoinProfileQuery = supabase
   .from("notes")
   .select("*, profiles (*)");
+
+export const NotesJoinProfileSingleQuery = supabase
+  .from("notes")
+  .select("*, profiles (*)")
+  .single();
