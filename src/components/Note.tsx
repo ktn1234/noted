@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavigateFunction } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import { TbGhost2 } from "react-icons/tb";
 
@@ -24,7 +24,7 @@ function Note({
   const navigate = useNavigate();
   const dateString = new Date(date).toLocaleString();
 
-  function navigateToProfile() {
+  function navigateToProfile(username: string, navigate: NavigateFunction) {
     if (window.location.pathname !== `/profiles/${username}`) {
       navigate(`/profiles/${username}`);
     }
@@ -48,7 +48,7 @@ function Note({
                 src={avatar_url}
                 alt="Profile Picture"
                 className="w-8 h-8 rounded-full cursor-pointer"
-                onClick={navigateToProfile}
+                onClick={() => navigateToProfile(username, navigate)}
               />
               {showUsername && (
                 <div className="absolute mt-2 p-2 rounded-md text-quaternary bg-primary dark:text-primary dark:bg-tertiary">
@@ -64,7 +64,7 @@ function Note({
               <TbGhost2
                 className="w-8 h-8 rounded-full cursor-pointer"
                 size={200}
-                onClick={navigateToProfile}
+                onClick={() => navigateToProfile(username, navigate)}
               />
               {showUsername && (
                 <div className="absolute mt-2 p-2 rounded-md text-quaternary bg-primary dark:text-primary dark:bg-tertiary">

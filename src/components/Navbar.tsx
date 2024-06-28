@@ -127,8 +127,13 @@ function Navbar(): JSX.Element {
                   <li
                     className="px-4 py-2 dark:hover:text-primary hover:text-quaternary cursor-pointer"
                     onClick={() => {
-                      navigate(`/profiles/${profile?.username}`);
-                      setDisplayDropdown(false);
+                      if (
+                        window.location.pathname !==
+                        `/profiles/${profile?.username}`
+                      ) {
+                        navigate(`/profiles/${profile?.username}`);
+                        setDisplayDropdown(false);
+                      }
                     }}
                   >
                     <span>Profile</span>
