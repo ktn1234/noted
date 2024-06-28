@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, NavigateFunction } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
 import { TbGhost2 } from "react-icons/tb";
+import Linkify from "linkify-react";
 
 export interface NoteProps {
   id: number;
@@ -35,7 +36,19 @@ function Note({
       key={id}
       className="flex flex-col justify-between text-primary dark:text-quaternary bg-tertiary dark:bg-secondary rounded-lg p-3 md:p-5 min-h-52"
     >
-      <span className="break-words">{text}</span>
+      <Linkify
+        as="span"
+        options={{
+          target: "_blank",
+          rel: "noopener noreferrer",
+          className:
+            "cursor-pointer underline dark:text-quaternary hover:text-quaternary dark:hover:text-primary",
+          defaultProtocol: "https",
+        }}
+        className="break-words"
+      >
+        {text}
+      </Linkify>
       <div className="flex items-center justify-between">
         <small>{dateString}</small>
         <div className="flex items-center">
