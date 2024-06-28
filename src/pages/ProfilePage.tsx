@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { TbGhost2 } from "react-icons/tb";
 import { IoNotifications, IoNotificationsOffSharp } from "react-icons/io5";
+import { PostgrestError } from "@supabase/supabase-js";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 
 import useAuth from "../hooks/useAuth";
 
@@ -14,150 +16,143 @@ import { ProfileJoinNotes } from "../lib/supabase/query.types";
 
 function ProfilePage() {
   const { username } = useParams<{ username: string }>();
+  const queryClient = useQueryClient();
   const user = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<ProfileJoinNotes | null>(null);
 
   // State that represents if the user is subscribed to the profile's user notifications
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
-  useEffect(() => {
-    setLoading(true);
-    if (!user.profile) return;
-    if (!username) {
-      setLoading(false);
-      return;
-    }
+  const {
+    data: profile,
+    isLoading,
+    isRefetching,
+  } = useQuery<
+    ProfileJoinNotes | null,
+    PostgrestError,
+    ProfileJoinNotes | null
+  >({
+    queryKey: ["profile", username],
+    queryFn: async () => {
+      const { data: currentProfile, error } = await supabase
+        .from("profiles")
+        .select("*, notes(*)")
+        .eq("username", username as string)
+        .order("created_at", {
+          ascending: false,
+          referencedTable: "notes",
+        })
+        .single();
 
-    supabase
-      .from("profiles")
-      .select("*, notes(*)")
-      .eq("username", username)
-      .order("created_at", {
-        ascending: false,
-        referencedTable: "notes",
-      })
-      .single()
-      .then(({ data: currentProfile, error }) => {
+      if (error) {
+        console.error("[ERROR] Error fetching profile:", error);
+        return null;
+      }
+
+      if (
+        currentProfile &&
+        user.profile &&
+        user.profile.username !== currentProfile.username
+      ) {
+        const { data: subscriptions, error } = await supabase
+          .from("subscriptions")
+          .select("*")
+          .eq("subscriber_user_id", user.profile.user_id)
+          .eq("user_id", currentProfile.user_id)
+          .single();
+
         if (error) {
-          console.error("[ERROR] Error fetching profile:", error);
-          return;
+          console.error("[ERROR] Error fetching subscription:", error);
+          return null;
         }
 
-        if (currentProfile && user.profile) {
-          if (user.profile.username === currentProfile.username) {
-            setProfile(currentProfile);
-          }
+        if (subscriptions) setIsSubscribed(true);
+      }
+      return currentProfile;
+    },
+  });
 
-          if (user.profile.username !== currentProfile.username) {
-            supabase
-              .from("subscriptions")
-              .select("*")
-              .eq("subscriber_user_id", user.profile.user_id)
-              .eq("user_id", currentProfile.user_id)
-              .then(({ data: subscriptions, error }) => {
-                if (error) {
-                  console.error("[ERROR] Error fetching subscription:", error);
-                  return;
-                }
-
-                if (subscriptions && subscriptions.length === 1) {
-                  setIsSubscribed(true);
-                } else {
-                  setIsSubscribed(false);
-                }
-                setProfile(currentProfile);
-              });
-          }
-        }
-        setLoading(false);
-      });
-  }, [username, user]);
-
-  async function handleDeleteNote(id: number) {
-    try {
+  const { mutate: deleteNote } = useMutation<
+    undefined,
+    PostgrestError,
+    { id: number }
+  >({
+    mutationFn: async ({ id }) => {
       const { error } = await supabase
         .from("notes")
         .delete()
         .eq("id", id)
         .single();
 
-      if (error) {
-        console.error("[ERROR] Error deleting note:", error);
-        return;
-      }
-
-      setProfile((prevProfile) => {
-        if (!prevProfile) return prevProfile;
-        return {
-          ...prevProfile,
-          notes: prevProfile.notes.filter((note) => note.id !== id),
-        };
-      });
-    } catch (error) {
+      if (error) throw error;
+    },
+    onError: (error) => {
       console.error("[ERROR] Error deleting note:", error);
-    }
-  }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["profile", username],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["notes"],
+      });
+    },
+  });
 
-  async function subscribeToUserNotifications(
-    authUserId: string,
-    profileUserId: string
-  ) {
-    try {
+  const { mutate: subscribeToUserNotifications } = useMutation<
+    number,
+    PostgrestError,
+    { authUserId: string; profileUserId: string }
+  >({
+    mutationFn: async ({ authUserId, profileUserId }) => {
       const { status, error } = await supabase.from("subscriptions").insert({
         subscriber_user_id: authUserId,
         user_id: profileUserId,
       });
-
-      if (error) {
-        console.error(
-          "[ERROR] Error subscribing to user notifications:",
-          error
-        );
-        return;
-      }
-
+      if (error) throw error;
+      return status;
+    },
+    onSuccess: (status) => {
       if (status === 201) setIsSubscribed(true);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error("[ERROR] Error subscribing to user notifications:", error);
-    }
-  }
+    },
+  });
 
-  async function unsubscribeToUserNotifications(
-    authUserId: string,
-    profileUserId: string
-  ) {
-    try {
+  const { mutate: unsubscribeToUserNotifications } = useMutation<
+    number,
+    PostgrestError,
+    { authUserId: string; profileUserId: string }
+  >({
+    mutationFn: async ({ authUserId, profileUserId }) => {
       const { status, error } = await supabase
         .from("subscriptions")
         .delete()
         .eq("subscriber_user_id", authUserId)
         .eq("user_id", profileUserId);
-
-      if (error) {
-        console.error(
-          "[ERROR] Error unsubscribing to user notifications:",
-          error
-        );
-        return;
-      }
-
+      if (error) throw error;
+      return status;
+    },
+    onSuccess: (status) => {
       if (status === 204) setIsSubscribed(false);
-    } catch (error) {
+    },
+    onError: (error) => {
       console.error(
         "[ERROR] Error unsubscribing to user notifications:",
         error
       );
-    }
-  }
+    },
+  });
 
-  if (loading || !profile || !user.profile) return <LoadingPage />;
+  if (isLoading || isRefetching) return <LoadingPage />;
 
   return (
     <main className="p-3 md:p-5">
       <h1 className="text-2xl text-center">Profile</h1>
-      {!profile && <p className="text-center mt-5">Profile not found</p>}
-      {profile && (
+      {(!profile || !user.profile || !user.profile.id) && (
+        <p className="text-center mt-5">Profile not found</p>
+      )}
+      {profile && user.profile && user.profile.id && (
         <article className="flex flex-col items-center mt-5">
           {profile.avatar_url ? (
             <img
@@ -177,10 +172,10 @@ function ProfilePage() {
                     size="30"
                     onClick={() =>
                       user.profile?.user_id &&
-                      unsubscribeToUserNotifications(
-                        user.profile.user_id,
-                        profile.user_id
-                      )
+                      unsubscribeToUserNotifications({
+                        authUserId: user.profile.user_id,
+                        profileUserId: profile.user_id,
+                      })
                     }
                   />
                 ) : (
@@ -189,10 +184,10 @@ function ProfilePage() {
                     size="30"
                     onClick={() =>
                       user.profile?.user_id &&
-                      subscribeToUserNotifications(
-                        user.profile.user_id,
-                        profile.user_id
-                      )
+                      subscribeToUserNotifications({
+                        authUserId: user.profile.user_id,
+                        profileUserId: profile.user_id,
+                      })
                     }
                   />
                 ))}
@@ -224,7 +219,7 @@ function ProfilePage() {
                       date={note.created_at}
                       username={profile.username as string}
                       avatar_url={profile.avatar_url}
-                      handleDeleteNote={handleDeleteNote}
+                      handleDeleteNote={(id) => deleteNote({ id })}
                     />
                   ) : (
                     <Note
