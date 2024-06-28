@@ -146,7 +146,6 @@ function NotificationsIcon(): JSX.Element | null {
   if (!user || notificationState === "unknown") {
     return (
       <IoNotifications
-        className="cursor-pointer"
         size="1.25em"
         color="grey"
         onClick={() =>
@@ -162,7 +161,6 @@ function NotificationsIcon(): JSX.Element | null {
   if (!isPushNotificationsSupported()) {
     return (
       <IoNotifications
-        className="cursor-pointer"
         size="1.25em"
         color="grey"
         onClick={() =>
