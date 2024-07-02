@@ -164,35 +164,43 @@ function HomePage(): JSX.Element {
                   isRefetching && "animate-spin"
                 }`}
                 size="40"
-                onClick={() => refetch()}
+                onClick={() => {
+                  for (let i = 0; i < notes.length; ++i) {
+                    queryClient.removeQueries({
+                      queryKey: ["reactions", notes[i].id],
+                    });
+                  }
+                  refetch();
+                }}
               />
             </span>
           </div>
           {isRefetching && <LoadingIndicator className="my-5 -z-10" />}
-          {filteredNotes.map((note) =>
-            note.profiles?.user_id === user.id ? (
-              <Note
-                key={note.id}
-                id={note.id}
-                text={note.text}
-                username={note.profiles!.username as string}
-                avatar_url={note.profiles!.avatar_url as string}
-                date={note.created_at}
-                reactions={note.reactions}
-                handleDeleteNote={handleDeleteNote}
-              />
-            ) : (
-              <Note
-                key={note.id}
-                id={note.id}
-                text={note.text}
-                username={note.profiles!.username as string}
-                avatar_url={note.profiles!.avatar_url as string}
-                date={note.created_at}
-                reactions={note.reactions}
-              />
-            )
-          )}
+          {!isRefetching &&
+            filteredNotes.map((note) =>
+              note.profiles?.user_id === user.id ? (
+                <Note
+                  key={note.id}
+                  id={note.id}
+                  text={note.text}
+                  username={note.profiles!.username as string}
+                  avatar_url={note.profiles!.avatar_url as string}
+                  date={note.created_at}
+                  reactions={note.reactions}
+                  handleDeleteNote={handleDeleteNote}
+                />
+              ) : (
+                <Note
+                  key={note.id}
+                  id={note.id}
+                  text={note.text}
+                  username={note.profiles!.username as string}
+                  avatar_url={note.profiles!.avatar_url as string}
+                  date={note.created_at}
+                  reactions={note.reactions}
+                />
+              )
+            )}
         </section>
       )}
       {showModal && (
