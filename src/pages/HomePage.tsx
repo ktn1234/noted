@@ -19,10 +19,7 @@ import Note from "../components/Note";
 import Modal from "../components/Modal";
 
 import supabase from "../lib/supabase";
-import {
-  NotesJoinProfile,
-  NotesJoinProfileSingle,
-} from "../lib/supabase/query.types";
+import { NotesJoinProfile } from "../lib/supabase/query.types";
 
 function HomePage(): JSX.Element {
   const { user } = useAuth();
@@ -59,19 +56,13 @@ function HomePage(): JSX.Element {
   });
 
   const { mutate: saveNote } = useMutation<
-    NotesJoinProfileSingle,
+    undefined,
     PostgrestError,
     { text: string; setText: React.Dispatch<React.SetStateAction<string>> }
   >({
     mutationFn: async ({ text }) => {
-      const { data, error } = await supabase
-        .from("notes")
-        .insert({ text })
-        .select("*, profiles (*)")
-        .single();
-
+      const { error } = await supabase.from("notes").insert({ text }).single();
       if (error) throw error;
-      return data;
     },
     onSuccess: (_, { setText }) => {
       queryClient.invalidateQueries({
@@ -173,7 +164,7 @@ function HomePage(): JSX.Element {
               />
             </span>
           </div>
-          {isRefetching && <LoadingIndicator className="my-5" />}
+          {isRefetching && <LoadingIndicator className="my-5 -z-10" />}
           {filteredNotes.map((note) =>
             note.profiles?.user_id === user.id ? (
               <Note
