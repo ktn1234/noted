@@ -221,6 +221,8 @@ function Note({
               className="flex-shrink-0"
               onMouseEnter={() => setShowUsername(true)}
               onMouseLeave={() => setShowUsername(false)}
+              onTouchStart={() => setShowUsername(true)}
+              onTouchEnd={() => setShowUsername(false)}
             >
               <img
                 src={avatar_url}
@@ -239,6 +241,8 @@ function Note({
               className="flex-shrink-0"
               onMouseEnter={() => setShowUsername(true)}
               onMouseLeave={() => setShowUsername(false)}
+              onTouchStart={() => setShowUsername(true)}
+              onTouchEnd={() => setShowUsername(false)}
             >
               <TbGhost2
                 className="w-8 h-8 rounded-full cursor-pointer hover:opacity-50"
