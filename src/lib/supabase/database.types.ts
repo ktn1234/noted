@@ -63,15 +63,7 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["user_id"]
-          },
-        ]
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -111,6 +103,42 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      reactions: {
+        Row: {
+          emoji: string
+          id: number
+          note_id: number
+          user_id: string
+        }
+        Insert: {
+          emoji: string
+          id?: number
+          note_id: number
+          user_id: string
+        }
+        Update: {
+          emoji?: string
+          id?: number
+          note_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_note_id_fkey"
+            columns: ["note_id"]
+            isOneToOne: false
+            referencedRelation: "notes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }

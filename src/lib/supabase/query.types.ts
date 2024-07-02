@@ -1,12 +1,10 @@
 import { QueryData } from "@supabase/supabase-js";
 import {
     NotesJoinProfileQuery,
-    NotesJoinProfileSingleQuery,
     ProfileJoinNotesQuery,
+    ReactionsJoinProfileQuery,
 } from "./query";
 
 export type ProfileJoinNotes = QueryData<typeof ProfileJoinNotesQuery>;
 export type NotesJoinProfile = QueryData<typeof NotesJoinProfileQuery>;
-export type NotesJoinProfileSingle = QueryData<
-    typeof NotesJoinProfileSingleQuery
->;
+export type ReactionsJoinProfile = QueryData<typeof ReactionsJoinProfileQuery>;

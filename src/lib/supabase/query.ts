@@ -9,7 +9,6 @@ export const NotesJoinProfileQuery = supabase
   .from("notes")
   .select("*, profiles (*)");
 
-export const NotesJoinProfileSingleQuery = supabase
-  .from("notes")
-  .select("*, profiles (*)")
-  .single();
+export const ReactionsJoinProfileQuery = supabase.from("reactions").select(
+  "*, profiles(username)",
+);
