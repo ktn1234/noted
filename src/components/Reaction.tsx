@@ -92,7 +92,11 @@ function Reaction({ noteId, userId, emoji, count, usernames }: ReactionProps) {
           </>
         )}
         <div
-          className="flex hover:opacity-50 dark:hover:opacity-50 cursor-pointer bg-secondary dark:bg-primary text-quaternary rounded-lg px-1.5 pt-1 text-left"
+          className={`flex ${
+            profile &&
+            usernames.includes(profile.username) &&
+            " border-2 border-quaternary"
+          } hover:opacity-50 dark:hover:opacity-50 cursor-pointer bg-secondary dark:bg-primary text-quaternary rounded-lg px-1.5 pt-1 text-left`}
           onClick={() => {
             if (profile && usernames.includes(profile.username)) {
               deleteReaction({ noteId, emoji, userId });
