@@ -81,6 +81,8 @@ function Reaction({ noteId, userId, emoji, count, usernames }: ReactionProps) {
       <div
         onMouseEnter={() => setShowReactors(true)}
         onMouseLeave={() => setShowReactors(false)}
+        onTouchStart={() => setShowReactors(true)}
+        onTouchEnd={() => setShowReactors(false)}
         className="relative"
       >
         {showReactors && (
