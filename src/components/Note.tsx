@@ -193,7 +193,9 @@ function Note({
                     }}
                     onClickOutside={(e: PointerEvent) => {
                       if (
-                        !emojiReactionRef.current?.contains(e.target as Node)
+                        !emojiReactionRef.current?.contains(e.target as Node) &&
+                        document.querySelector("em-emoji-picker") !==
+                          e.srcElement
                       ) {
                         setShowEmojis(false);
                       }
