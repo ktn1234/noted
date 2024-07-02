@@ -19,7 +19,7 @@ import Note from "../components/Note";
 import Modal from "../components/Modal";
 
 import supabase from "../lib/supabase";
-import { NotesJoinProfile } from "../lib/supabase/query.types";
+import { NotesJoinProfileReactionsJoinProfile } from "../lib/supabase/query.types";
 
 function HomePage(): JSX.Element {
   const { user } = useAuth();
@@ -35,13 +35,17 @@ function HomePage(): JSX.Element {
     isLoading,
     refetch,
     isRefetching,
-  } = useQuery<NotesJoinProfile | null, DefaultError, NotesJoinProfile>({
+  } = useQuery<
+    NotesJoinProfileReactionsJoinProfile | null,
+    DefaultError,
+    NotesJoinProfileReactionsJoinProfile
+  >({
     queryKey: ["notes"],
     initialData: [],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("notes")
-        .select("*, profiles (*)")
+        .select("*, profiles (*), reactions(*, profiles(username))")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -174,6 +178,7 @@ function HomePage(): JSX.Element {
                 username={note.profiles!.username as string}
                 avatar_url={note.profiles!.avatar_url as string}
                 date={note.created_at}
+                reactions={note.reactions}
                 handleDeleteNote={handleDeleteNote}
               />
             ) : (
@@ -184,6 +189,7 @@ function HomePage(): JSX.Element {
                 username={note.profiles!.username as string}
                 avatar_url={note.profiles!.avatar_url as string}
                 date={note.created_at}
+                reactions={note.reactions}
               />
             )
           )}

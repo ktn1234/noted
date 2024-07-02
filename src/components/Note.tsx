@@ -34,6 +34,7 @@ export interface NoteProps {
   date: string;
   username: string;
   avatar_url: string | null;
+  reactions: ReactionsJoinProfile;
   handleDeleteNote?: (id: number) => void;
 }
 
@@ -43,6 +44,7 @@ function Note({
   date,
   username,
   avatar_url,
+  reactions: initialReactions,
   handleDeleteNote,
 }: NoteProps) {
   const { user, profile } = useAuth();
@@ -64,6 +66,8 @@ function Note({
     PostgrestError,
     ReactionsJoinProfile
   >({
+    initialData: initialReactions,
+    staleTime: 1000,
     queryKey: ["reactions", id],
     queryFn: async () => {
       const { data, error } = await supabase

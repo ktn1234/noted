@@ -12,7 +12,7 @@ import LoadingPage from "./LoadingPage";
 import Note from "../components/Note";
 
 import supabase from "../lib/supabase";
-import { ProfileJoinNotes } from "../lib/supabase/query.types";
+import { ProfileJoinNotesJoinReactionsJoinProfile } from "../lib/supabase/query.types";
 
 function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -27,15 +27,15 @@ function ProfilePage() {
     isLoading,
     isRefetching,
   } = useQuery<
-    ProfileJoinNotes | null,
+    ProfileJoinNotesJoinReactionsJoinProfile | null,
     PostgrestError,
-    ProfileJoinNotes | null
+    ProfileJoinNotesJoinReactionsJoinProfile | null
   >({
     queryKey: ["profile", username],
     queryFn: async () => {
       const { data: currentProfile, error } = await supabase
         .from("profiles")
-        .select("*, notes(*)")
+        .select("*, notes(*, reactions(*, profiles(username)))")
         .eq("username", username as string)
         .order("created_at", {
           ascending: false,
@@ -219,6 +219,7 @@ function ProfilePage() {
                       date={note.created_at}
                       username={profile.username as string}
                       avatar_url={profile.avatar_url}
+                      reactions={note.reactions}
                       handleDeleteNote={(id) => deleteNote({ id })}
                     />
                   ) : (
@@ -227,6 +228,7 @@ function ProfilePage() {
                       text={note.text}
                       date={note.created_at}
                       username={profile.username as string}
+                      reactions={note.reactions}
                       avatar_url={profile.avatar_url}
                     />
                   )}
