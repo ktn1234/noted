@@ -5,11 +5,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaTrash } from "react-icons/fa";
 import { TbGhost2 } from "react-icons/tb";
 import { GoSmiley } from "react-icons/go";
+import { PiCat, PiDog } from "react-icons/pi";
 import Linkify from "linkify-react";
 import EmojiPicker from "@emoji-mart/react";
 import emojiMartData from "@emoji-mart/data";
 
 import Reaction from "./Reaction";
+import useTheme from "../hooks/useTheme";
 import useAuth from "../hooks/useAuth";
 import supabase from "../lib/supabase";
 import { ReactionsJoinProfile } from "../lib/supabase/query.types";
@@ -47,6 +49,7 @@ function Note({
   reactions: initialReactions,
   handleDeleteNote,
 }: NoteProps) {
+  const { darkMode } = useTheme();
   const { user, profile } = useAuth();
   const queryClient = useQueryClient();
   const [showUsername, setShowUsername] = useState(false);
@@ -54,11 +57,43 @@ function Note({
   const navigate = useNavigate();
   const dateString = new Date(date).toLocaleString();
   const emojiReactionRef = useRef<HTMLDivElement | null>(null);
+  const [isAnimalified, setIsAnimalified] = useState(false);
 
-  function navigateToProfile(username: string, navigate: NavigateFunction) {
+  function navigateToProfile(
+    username: string,
+    navigate: NavigateFunction
+  ): void {
     if (window.location.pathname !== `/profiles/${username}`) {
       navigate(`/profiles/${username}`);
     }
+  }
+
+  function meowify(text: string): string {
+    return text
+      .split(" ")
+      .map((e, idx) => {
+        const textDiff = e.length - 4;
+        const meow = "meow" + "w".repeat(textDiff > 0 ? textDiff : 0);
+        if (idx === 0) {
+          return meow.charAt(0).toUpperCase() + meow.slice(1);
+        }
+        return meow;
+      })
+      .join(", ");
+  }
+
+  function woofify(text: string): string {
+    return text
+      .split(" ")
+      .map((e, idx) => {
+        const textDiff = e.length - 4;
+        const woof = "woof" + "f".repeat(textDiff > 0 ? textDiff : 0);
+        if (idx === 0) {
+          return woof.charAt(0).toUpperCase() + woof.slice(1);
+        }
+        return woof;
+      })
+      .join(", ");
   }
 
   const { data: reactions } = useQuery<
@@ -149,7 +184,8 @@ function Note({
         }}
         className="break-words flex-shrink-0 basis-32"
       >
-        {text}
+        {darkMode ? (isAnimalified ? meowify(text) : text) : null}
+        {!darkMode ? (isAnimalified ? woofify(text) : text) : null}
       </Linkify>
       <div className="flex items-start justify-between gap-3">
         <small className="whitespace-pre">{dateString}</small>
@@ -176,8 +212,8 @@ function Note({
                 <div
                   className={`absolute ${
                     profile.username === username
-                      ? "-right-[84px]"
-                      : "-right-14"
+                      ? "-right-[124px]"
+                      : "-right-24"
                   } sm:-right-10 bottom-10 py-2 bg-[#151617] rounded-lg`}
                 >
                   <EmojiPicker
@@ -218,6 +254,17 @@ function Note({
               />
             </div>
           </div>
+          {darkMode ? (
+            <PiCat
+              className="w-7 h-7 cursor-pointer dark:hover:text-primary hover:text-quaternary"
+              onClick={() => setIsAnimalified(!isAnimalified)}
+            />
+          ) : (
+            <PiDog
+              className="w-7 h-7 cursor-pointer dark:hover:text-primary hover:text-quaternary"
+              onClick={() => setIsAnimalified(!isAnimalified)}
+            />
+          )}
           {avatar_url ? (
             <div
               className="flex-shrink-0"
