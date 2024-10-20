@@ -84,56 +84,68 @@ function NotificationsIcon(): JSX.Element | null {
 
   useEffect(() => {
     async function initNotificationState(user: User) {
-      setSemaphore(true);
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
+      try {
+        setSemaphore(true);
+        const registration = await navigator.serviceWorker.ready;
+        const subscription = await registration.pushManager.getSubscription();
 
-      // The user has not enabled notifications previously
-      if (!subscription) setNotificationState("disabled");
+        // The user has not enabled notifications previously
+        if (!subscription) {
+          console.log("[DEBUG] Notification not enabled");
+          setNotificationState("disabled");
+        }
 
-      // The user has enabled notifications previously from the same device on a signed in account
-      if (subscription) {
-        const { status, error } = await supabase
-          .from("notifications")
-          .select("*")
-          .eq("user_id", user.id)
-          .eq("endpoint", JSON.stringify(subscription))
-          .single();
-
-        // 200 Status Code OK - Succesfully fetched notification associated with signed in user
-        if (status === 200) setNotificationState("enabled");
-
-        // 406 Status Code Not Acceptable - Could not find the subscription endpoint in the database
-        if (status === 406) {
+        // The user has enabled notifications previously from the same device on a signed in account
+        if (subscription) {
           const { status, error } = await supabase
             .from("notifications")
-            .insert({
-              user_id: user.id,
-              endpoint: JSON.stringify(subscription),
-            });
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("endpoint", JSON.stringify(subscription))
+            .single();
 
-          // 201 Status Code Created - Succesfully inserted notification associated with signed in user
-          if (status === 201) setNotificationState("enabled");
+          // 200 Status Code OK - Succesfully fetched notification associated with signed in user
+          if (status === 200) {
+            console.log("[DEBUG] Notification already enabled");
+            setNotificationState("enabled");
+          }
 
-          // Could not insert notification associated with signed in user
-          if (status !== 201 && error) {
-            console.error(
-              "[ERROR] Error associating user and notification with insert:",
-              error
-            );
+          // 406 Status Code Not Acceptable - Could not find the subscription endpoint in the database
+          if (status === 406) {
+            const { status, error } = await supabase
+              .from("notifications")
+              .insert({
+                user_id: user.id,
+                endpoint: JSON.stringify(subscription),
+              });
+
+            // 201 Status Code Created - Succesfully inserted notification associated with signed in user
+            if (status === 201) setNotificationState("enabled");
+
+            // Could not insert notification associated with signed in user
+            if (status !== 201 && error) {
+              console.error(
+                "[ERROR] Error associating user and notification with insert:",
+                error
+              );
+              setNotificationState("unknown");
+            }
+          }
+
+          // Something else went wrong fetching the notification associated with the signed in user
+          if (status !== 406 && error) {
+            console.error("[ERROR] Error fetching notification:", error);
             setNotificationState("unknown");
           }
         }
-
-        // Something else went wrong fetching the notification associated with the signed in user
-        if (status !== 406 && error) {
-          console.error("[ERROR] Error fetching notification:", error);
-          setNotificationState("unknown");
-        }
+      } catch (error) {
+        console.error(
+          "[ERROR] Failed to initialize notification state. This message is expected if you're using a browser that doesn't support Service Worker APIs, such as Internet Explorer or older versions of Safari. It may also appear if you're running the application on localhost or using a non-secure connection (HTTP)."
+        );
+      } finally {
+        setInit(true);
+        setSemaphore(false);
       }
-
-      setInit(true);
-      setSemaphore(false);
     }
 
     if (user && !init && !semaphore) initNotificationState(user);
