@@ -9,7 +9,7 @@
 
 // @deno-types="npm:@types/web-push@3.6.3"
 import webpush from "npm:web-push@3.6.7";
-import { createClient } from "npm:@supabase/supabase-js@2.43.4";
+import { createClient } from "npm:@supabase/supabase-js@2.45.6";
 
 interface Note {
   id: string;
