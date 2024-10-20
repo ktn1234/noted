@@ -41,6 +41,7 @@ Deno.serve(async (req) => {
   const payload: WebhookPayload = await req.json();
   const { record: { text, user_id } } = payload;
 
+  // Fetch the user who created the note
   const { data: user, error: userQueryError } = await supabase.from("profiles")
     .select(
       "username",
@@ -58,6 +59,7 @@ Deno.serve(async (req) => {
     );
   }
 
+  // Fetch subscribers of the user who created the note
   const { data: subscribers, subscriptionsQueryError } = await supabase.from(
     "subscriptions",
   )
@@ -77,7 +79,10 @@ Deno.serve(async (req) => {
   }
 
   let pushNotificationsSent = 0;
+
+  // Fetch all subscribers' device endpoints (browser's vendor's push server with auth keys) and send push notifications
   for (let i = 0; i < subscribers.length; ++i) {
+    // Fetch all subscribers' device endpoints (browser's vendor's push server with auth keys)
     const subscriberUserId = subscribers[i].subscriber_user_id;
     const { data: appNotifications, error } = await supabase.from(
       "notifications",
@@ -94,6 +99,7 @@ Deno.serve(async (req) => {
       continue;
     }
 
+    // Send push notifications to all subscribers' device endpoints
     for (let j = 0; j < appNotifications.length; ++j) {
       const endpoint = appNotifications[j].endpoint as string;
 
