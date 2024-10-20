@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
       try {
         await webpush.sendNotification(
           JSON.parse(endpoint),
-          // JSON.stringify(data), // TODO: Comment back in when https://github.com/web-push-libs/web-push/issues/904 gets fixed
+          JSON.stringify(data),
         );
         pushNotificationsSent++;
       } catch (err: unknown) {
