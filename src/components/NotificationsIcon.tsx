@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
-
 import { IoNotifications, IoNotificationsOffSharp } from "react-icons/io5";
 
+import { User } from "@supabase/supabase-js";
+
 import config from "../config";
-
 import useAuth from "../hooks/useAuth";
-
-import supabase from "../lib/supabase";
 import {
-  isPushNotificationsSupported,
   isDeviceNotificationsForAppDenied,
-  urlBase64ToUint8Array,
+  isPushNotificationsSupported,
+  urlBase64ToUint8Array
 } from "../lib/pwa/notifications";
+import supabase from "../lib/supabase";
 
 type NotificationState = "unknown" | "enabled" | "disabled";
 
@@ -38,12 +36,12 @@ function NotificationsIcon(): JSX.Element | null {
       const registration = await navigator.serviceWorker.ready;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(config.VAPID_PUBLIC_KEY),
+        applicationServerKey: urlBase64ToUint8Array(config.VAPID_PUBLIC_KEY)
       });
 
       const { status, error } = await supabase.from("notifications").insert({
         user_id: user.id,
-        endpoint: JSON.stringify(subscription),
+        endpoint: JSON.stringify(subscription)
       });
 
       if (error) {
@@ -116,7 +114,7 @@ function NotificationsIcon(): JSX.Element | null {
               .from("notifications")
               .insert({
                 user_id: user.id,
-                endpoint: JSON.stringify(subscription),
+                endpoint: JSON.stringify(subscription)
               });
 
             // 201 Status Code Created - Succesfully inserted notification associated with signed in user

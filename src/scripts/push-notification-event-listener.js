@@ -1,4 +1,4 @@
-self.addEventListener("push", (e) => {
+(self.addEventListener("push", (e) => {
   const promises = [];
 
   const message = e.data?.json();
@@ -12,8 +12,8 @@ self.addEventListener("push", (e) => {
       badge: "/assets/apple-icon-180.png",
       timestamp,
       data: {
-        url,
-      },
+        url
+      }
     })
   );
 
@@ -38,4 +38,4 @@ self.addEventListener("push", (e) => {
         }
       });
     e.waitUntil(promiseChain);
-  });
+  }));

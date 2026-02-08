@@ -1,8 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import supabase from "../lib/supabase";
+
 import { PostgrestError } from "@supabase/supabase-js";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import useAuth from "../hooks/useAuth";
+import supabase from "../lib/supabase";
 
 interface ReactionProps {
   noteId: number;
@@ -47,9 +49,9 @@ function Reaction({ noteId, userId, emoji, count, usernames }: ReactionProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reactions", noteId],
+        queryKey: ["reactions", noteId]
       });
-    },
+    }
   });
 
   const { mutate: addReaction } = useMutation<
@@ -61,7 +63,7 @@ function Reaction({ noteId, userId, emoji, count, usernames }: ReactionProps) {
       const { error } = await supabase.from("reactions").insert({
         emoji,
         note_id: noteId,
-        user_id: userId,
+        user_id: userId
       });
 
       if (error) throw error;
@@ -71,9 +73,9 @@ function Reaction({ noteId, userId, emoji, count, usernames }: ReactionProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reactions", noteId],
+        queryKey: ["reactions", noteId]
       });
-    },
+    }
   });
 
   return (
@@ -108,7 +110,7 @@ function Reaction({ noteId, userId, emoji, count, usernames }: ReactionProps) {
               addReaction({
                 emoji,
                 note_id: noteId,
-                user_id: userId,
+                user_id: userId
               });
             }
           }}

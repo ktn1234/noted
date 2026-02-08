@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { User } from "@supabase/supabase-js";
 import { FaStickyNote } from "react-icons/fa";
-import { MdLightMode, MdDarkMode } from "react-icons/md";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { TbGhost2 } from "react-icons/tb";
+import { useNavigate } from "react-router-dom";
+
+import { User } from "@supabase/supabase-js";
 
 import useAuth from "../hooks/useAuth";
 import useTheme from "../hooks/useTheme";
-
 import supabase from "../lib/supabase";
-
 import NotificationsIcon from "./NotificationsIcon";
 
 function Navbar(): JSX.Element {

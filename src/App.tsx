@@ -3,29 +3,25 @@ import {
   Navigate,
   Outlet,
   Route,
-  Routes,
+  Routes
 } from "react-router-dom";
+
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import ThemeProvider from "./contexts/ThemeProvider";
-import AuthProvider from "./contexts/AuthProvider";
-
-import RootLayout from "./components/RootLayout";
-
-import AuthPage from "./pages/AuthPage";
-import VerifyPage from "./pages/VerifyPage";
-
-// import Signup from "./pages/SignupPage";
-// import ResendConfirmationPage from "./pages/ResendConfirmationPage";
-
 import Protected from "./components/Protected";
-import HomePage from "./pages/HomePage";
-import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
-import NotificationsPage from "./pages/NotificationsPage";
-
+import RootLayout from "./components/RootLayout";
+import AuthProvider from "./contexts/AuthProvider";
+import ThemeProvider from "./contexts/ThemeProvider";
 import queryclient from "./lib/react-query";
+import AuthPage from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
+import NotificationsPage from "./pages/NotificationsPage";
+import ProfilePage from "./pages/ProfilePage";
+import ResendConfirmationPage from "./pages/ResendConfirmationPage";
+import SettingsPage from "./pages/SettingsPage";
+import Signup from "./pages/SignupPage";
+import VerifyPage from "./pages/VerifyPage";
 
 function App() {
   return (
@@ -38,11 +34,11 @@ function App() {
                 <Route path="*" element={<Navigate to="/" />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/auth/verify" element={<VerifyPage />} />
-                {/* <Route path="/auth/signup" element={<Signup />} /> */}
-                {/* <Route
-                path="/auth/resend-confirmation"
-                element={<ResendConfirmationPage />}
-              /> */}
+                <Route path="/auth/signup" element={<Signup />} />
+                <Route
+                  path="/auth/resend-confirmation"
+                  element={<ResendConfirmationPage />}
+                />
                 <Route
                   element={
                     <Protected>

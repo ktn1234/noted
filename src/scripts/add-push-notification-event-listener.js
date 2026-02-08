@@ -1,7 +1,7 @@
 import fs from "fs";
-import { fileURLToPath } from "url";
-import { resolve, dirname } from "path";
 import { minify } from "minify";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 

@@ -1,15 +1,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
-import useAuth from "../hooks/useAuth";
-
-import LoadingPage from "./LoadingPage";
-
-import FormInput from "../components/FormInput";
 import Button from "../components/Button";
-
+import FormInput from "../components/FormInput";
+import useAuth from "../hooks/useAuth";
 import supabase from "../lib/supabase";
 import { TablesInsert } from "../lib/supabase/database.types";
+import LoadingPage from "./LoadingPage";
 
 function SettingsPage() {
   const { user, profile, setProfile } = useAuth();
@@ -57,7 +54,7 @@ function SettingsPage() {
       username: username.toLowerCase(),
       full_name,
       avatar_url,
-      website,
+      website
     };
 
     try {
@@ -87,8 +84,8 @@ function SettingsPage() {
         username,
         full_name,
         avatar_url,
-        website,
-      },
+        website
+      }
     });
 
     if (error) {

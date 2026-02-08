@@ -21,7 +21,7 @@ function FormInput({
   autoComplete,
   disabled,
   required,
-  autoFocus,
+  autoFocus
 }: FormInputProps): JSX.Element {
   return (
     <div className="bg-tertiary dark:bg-secondary rounded-md p-2 mb-5">

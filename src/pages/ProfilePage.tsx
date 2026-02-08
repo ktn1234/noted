@@ -1,18 +1,16 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { TbGhost2 } from "react-icons/tb";
 import { IoNotifications, IoNotificationsOffSharp } from "react-icons/io5";
+import { TbGhost2 } from "react-icons/tb";
+import { useParams } from "react-router-dom";
+
 import { PostgrestError } from "@supabase/supabase-js";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-
-import useAuth from "../hooks/useAuth";
-
-import LoadingPage from "./LoadingPage";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import Note from "../components/Note";
-
+import useAuth from "../hooks/useAuth";
 import supabase from "../lib/supabase";
 import { ProfileJoinNotesJoinReactionsJoinProfile } from "../lib/supabase/query.types";
+import LoadingPage from "./LoadingPage";
 
 function ProfilePage() {
   const { username } = useParams<{ username: string }>();
@@ -25,7 +23,7 @@ function ProfilePage() {
   const {
     data: profile,
     isLoading,
-    isRefetching,
+    isRefetching
   } = useQuery<
     ProfileJoinNotesJoinReactionsJoinProfile | null,
     PostgrestError,
@@ -39,7 +37,7 @@ function ProfilePage() {
         .eq("username", username as string)
         .order("created_at", {
           ascending: false,
-          referencedTable: "notes",
+          referencedTable: "notes"
         })
         .single();
 
@@ -68,7 +66,7 @@ function ProfilePage() {
         if (subscriptions) setIsSubscribed(true);
       }
       return currentProfile;
-    },
+    }
   });
 
   const { mutate: deleteNote } = useMutation<
@@ -90,12 +88,12 @@ function ProfilePage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["profile", username],
+        queryKey: ["profile", username]
       });
       queryClient.invalidateQueries({
-        queryKey: ["notes"],
+        queryKey: ["notes"]
       });
-    },
+    }
   });
 
   const { mutate: subscribeToUserNotifications } = useMutation<
@@ -106,7 +104,7 @@ function ProfilePage() {
     mutationFn: async ({ authUserId, profileUserId }) => {
       const { status, error } = await supabase.from("subscriptions").insert({
         subscriber_user_id: authUserId,
-        user_id: profileUserId,
+        user_id: profileUserId
       });
       if (error) throw error;
       return status;
@@ -116,7 +114,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       console.error("[ERROR] Error subscribing to user notifications:", error);
-    },
+    }
   });
 
   const { mutate: unsubscribeToUserNotifications } = useMutation<
@@ -141,7 +139,7 @@ function ProfilePage() {
         "[ERROR] Error unsubscribing to user notifications:",
         error
       );
-    },
+    }
   });
 
   if (isLoading || isRefetching) return <LoadingPage />;
@@ -174,7 +172,7 @@ function ProfilePage() {
                       user.profile?.user_id &&
                       unsubscribeToUserNotifications({
                         authUserId: user.profile.user_id,
-                        profileUserId: profile.user_id,
+                        profileUserId: profile.user_id
                       })
                     }
                   />
@@ -186,7 +184,7 @@ function ProfilePage() {
                       user.profile?.user_id &&
                       subscribeToUserNotifications({
                         authUserId: user.profile.user_id,
-                        profileUserId: profile.user_id,
+                        profileUserId: profile.user_id
                       })
                     }
                   />

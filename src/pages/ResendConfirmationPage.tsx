@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import LoadingPage from "./LoadingPage";
-
-import FormInput from "../components/FormInput";
 import Button from "../components/Button";
-
+import FormInput from "../components/FormInput";
 import Modal from "../components/Modal";
-
 import supabase from "../lib/supabase";
+import LoadingPage from "./LoadingPage";
 
 function ResendConfirmationPage() {
   const navigate = useNavigate();
@@ -29,8 +26,8 @@ function ResendConfirmationPage() {
       type: "signup",
       email,
       options: {
-        emailRedirectTo: window.location.origin,
-      },
+        emailRedirectTo: window.location.origin
+      }
     });
 
     if (error) {

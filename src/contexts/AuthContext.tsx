@@ -1,4 +1,5 @@
 import { createContext } from "react";
+
 import { Session, User } from "@supabase/supabase-js";
 
 import { Tables } from "../lib/supabase/database.types";
@@ -16,5 +17,5 @@ export const AuthContext = createContext<AuthContextType>({
   session: null,
   profile: null,
   setProfile: () => {},
-  isSignedIn: false,
+  isSignedIn: false
 });

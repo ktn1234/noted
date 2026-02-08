@@ -1,8 +1,8 @@
-import webpush from "web-push";
 import fs from "fs";
-import { fileURLToPath } from "url";
-import { resolve, dirname } from "path";
 import process from "node:process";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
+import webpush from "web-push";
 
 const currentDirectory = dirname(fileURLToPath(import.meta.url));
 
@@ -28,7 +28,7 @@ const data = {
   title: "Push Notification Title",
   body: "Body Content",
   url: "http://localhost:5173",
-  timestamp: Date.now(),
+  timestamp: Date.now()
 };
 
 const endpoints = [];

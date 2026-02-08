@@ -1,25 +1,23 @@
 import { useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
+
 import { PostgrestError } from "@supabase/supabase-js";
 import {
   DefaultError,
   useMutation,
   useQuery,
-  useQueryClient,
+  useQueryClient
 } from "@tanstack/react-query";
 
-import useAuth from "../hooks/useAuth";
-
-import LoadingPage from "./LoadingPage";
-
-import Search from "../components/Search";
 import AddNote from "../components/AddNote";
 import LoadingIndicator from "../components/LoadingIndicator";
-import Note from "../components/Note";
 import Modal from "../components/Modal";
-
+import Note from "../components/Note";
+import Search from "../components/Search";
+import useAuth from "../hooks/useAuth";
 import supabase from "../lib/supabase";
 import { NotesJoinProfileReactionsJoinProfile } from "../lib/supabase/query.types";
+import LoadingPage from "./LoadingPage";
 
 function HomePage(): JSX.Element {
   const { user } = useAuth();
@@ -34,7 +32,7 @@ function HomePage(): JSX.Element {
     isFetching,
     isLoading,
     refetch,
-    isRefetching,
+    isRefetching
   } = useQuery<
     NotesJoinProfileReactionsJoinProfile | null,
     DefaultError,
@@ -56,7 +54,7 @@ function HomePage(): JSX.Element {
       }
 
       return data;
-    },
+    }
   });
 
   const { mutate: saveNote } = useMutation<
@@ -70,7 +68,7 @@ function HomePage(): JSX.Element {
     },
     onSuccess: (_, { setText }) => {
       queryClient.invalidateQueries({
-        queryKey: ["notes"],
+        queryKey: ["notes"]
       });
       setText("");
     },
@@ -80,7 +78,7 @@ function HomePage(): JSX.Element {
         "Something went wrong while saving your note. Please try again."
       );
       setShowModal(true);
-    },
+    }
   });
 
   const { mutate: deleteNote } = useMutation<
@@ -99,7 +97,7 @@ function HomePage(): JSX.Element {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["notes"],
+        queryKey: ["notes"]
       });
     },
     onError: (error) => {
@@ -108,7 +106,7 @@ function HomePage(): JSX.Element {
         "Something went wrong while deleting your node. Please try again."
       );
       setShowModal(true);
-    },
+    }
   });
 
   async function handleSaveNote(
@@ -167,7 +165,7 @@ function HomePage(): JSX.Element {
                 onClick={() => {
                   for (let i = 0; i < notes.length; ++i) {
                     queryClient.removeQueries({
-                      queryKey: ["reactions", notes[i].id],
+                      queryKey: ["reactions", notes[i].id]
                     });
                   }
                   refetch();

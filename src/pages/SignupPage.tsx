@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import useAuth from "../hooks/useAuth";
-
-import LoadingPage from "./LoadingPage";
-
 import Button from "../components/Button";
 import FormInput from "../components/FormInput";
 import Modal from "../components/Modal";
-
+import useAuth from "../hooks/useAuth";
 import supabase from "../lib/supabase";
+import LoadingPage from "./LoadingPage";
 
 function Signup() {
   const { session } = useAuth();
@@ -37,9 +34,9 @@ function Signup() {
             username,
             full_name: fullName || undefined,
             avatar_url: avatarUrl || undefined,
-            website: website || undefined,
-          },
-        },
+            website: website || undefined
+          }
+        }
       });
 
       if (error) {

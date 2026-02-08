@@ -1,11 +1,10 @@
-import { useState, useEffect } from "react";
-import { User, Session } from "@supabase/supabase-js";
+import { useEffect, useState } from "react";
+
+import { Session, User } from "@supabase/supabase-js";
 
 import supabase from "../lib/supabase";
 import { Tables } from "../lib/supabase/database.types";
-
 import LoadingPage from "../pages/LoadingPage";
-
 import { AuthContext } from "./AuthContext";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -17,6 +16,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("Initial session:", session);
       if (session && session.user) {
         setSession(session);
         setUser(session.user);
@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     const {
-      data: { subscription },
+      data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!isSignedIn && session && session.user) {
         supabase
@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     session,
     profile,
     setProfile,
-    isSignedIn,
+    isSignedIn
   };
 
   return (

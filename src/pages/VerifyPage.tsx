@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import useAuth from "../hooks/useAuth";
-
-import LoadingPage from "./LoadingPage";
-
-import FormInput from "../components/FormInput";
 import Button from "../components/Button";
+import FormInput from "../components/FormInput";
 import Modal from "../components/Modal";
-
+import useAuth from "../hooks/useAuth";
 import supabase from "../lib/supabase";
+import LoadingPage from "./LoadingPage";
 
 function VerifyPage() {
   const { session } = useAuth();
@@ -29,7 +26,7 @@ function VerifyPage() {
       const { error } = await supabase.auth.verifyOtp({
         email,
         token: confirmationCode,
-        type: "email",
+        type: "email"
       });
 
       if (error) {

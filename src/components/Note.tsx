@@ -1,20 +1,21 @@
-import { useState, useRef, useMemo } from "react";
-import { useNavigate, NavigateFunction } from "react-router-dom";
-import { PostgrestError } from "@supabase/supabase-js";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useRef, useState } from "react";
 import { FaTrash } from "react-icons/fa";
-import { TbGhost2 } from "react-icons/tb";
 import { GoSmiley } from "react-icons/go";
 import { PiCat, PiDog } from "react-icons/pi";
-import Linkify from "linkify-react";
-import EmojiPicker from "@emoji-mart/react";
-import emojiMartData from "@emoji-mart/data";
+import { TbGhost2 } from "react-icons/tb";
+import { NavigateFunction, useNavigate } from "react-router-dom";
 
-import Reaction from "./Reaction";
-import useTheme from "../hooks/useTheme";
+import emojiMartData from "@emoji-mart/data";
+import EmojiPicker from "@emoji-mart/react";
+import { PostgrestError } from "@supabase/supabase-js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Linkify from "linkify-react";
+
 import useAuth from "../hooks/useAuth";
+import useTheme from "../hooks/useTheme";
 import supabase from "../lib/supabase";
 import { ReactionsJoinProfile } from "../lib/supabase/query.types";
+import Reaction from "./Reaction";
 
 interface UniqueEmojis {
   [emoji: string]: string[];
@@ -47,7 +48,7 @@ function Note({
   username,
   avatar_url,
   reactions: initialReactions,
-  handleDeleteNote,
+  handleDeleteNote
 }: NoteProps) {
   const { darkMode } = useTheme();
   const { user, profile } = useAuth();
@@ -112,7 +113,7 @@ function Note({
 
       if (error) throw error;
       return data;
-    },
+    }
   });
 
   const uniqueEmojis = useMemo(() => {
@@ -151,19 +152,19 @@ function Note({
         const { error } = await supabase.from("reactions").insert({
           emoji,
           note_id,
-          user_id,
+          user_id
         });
         if (error) throw error;
       }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["reactions", id],
+        queryKey: ["reactions", id]
       });
     },
     onError: (error) => {
       console.error("[ERROR] Error inserting reaction", error);
-    },
+    }
   });
 
   if (!user || !profile) return null;
@@ -180,7 +181,7 @@ function Note({
           rel: "noopener noreferrer",
           className:
             "cursor-pointer underline dark:text-quaternary hover:text-quaternary dark:hover:text-primary",
-          defaultProtocol: "https",
+          defaultProtocol: "https"
         }}
         className="break-words flex-shrink-0 basis-32"
       >
@@ -223,7 +224,7 @@ function Note({
                         emoji: emoji.native,
                         note_id: id,
                         user_id: user.id,
-                        username: profile.username,
+                        username: profile.username
                       });
                       setShowEmojis(false);
                     }}
