@@ -1,0 +1,19 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "singleQuote": false,
+  "trailingComma": "none",
+  "semi": true,
+  "plugins": ["@trivago/prettier-plugin-sort-imports", "prettier-plugin-sql"],
+  "importOrder": [
+    "dotenv/config",
+    "^react",
+    "<THIRD_PARTY_MODULES>",
+    "^[./]",
+    "^[../]"
+  ],
+  "language": "postgresql",
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "importOrderCaseInsensitive": true
+}
